@@ -368,26 +368,6 @@ static int fan_control_algorithm_monitor(void)
 	initial_fan_config(bus);
 
 	while (1) {
-		rc = sd_bus_call_method(bus,
-					g_PowerObjPath.service_bus,
-					g_PowerObjPath.path[0],
-					g_PowerObjPath.service_inf,
-					"getPowerState",
-					&bus_error,
-					&response,
-					NULL);
-		if(rc < 0) {
-			fprintf(stderr, "Failed to get power state from dbus: %s\n", bus_error.message);
-			goto finish;
-		}
-
-		rc = sd_bus_message_read(response, "i", &Power_state);
-		if (rc < 0 ) {
-			fprintf(stderr, "Failed to parse GetPowerState response message:[%s]\n", strerror(-rc));
-			goto finish;
-		}
-		sd_bus_error_free(&bus_error);
-		response = sd_bus_message_unref(response);
 
 		if (Power_state == 1 ) {
 

@@ -130,77 +130,77 @@ void check_cable_status()
 
 void init_cable_gpio_mapping()
 {
-	CableLed[CABLE_SW1][PORT1A].gpioNumA32Present = 256;
-	CableLed[CABLE_SW1][PORT1A].gpioNumB9Present = 257;
-	CableLed[CABLE_SW1][PORT1B].gpioNumA32Present = 258;
-	CableLed[CABLE_SW1][PORT1B].gpioNumB9Present = 259;
-	CableLed[CABLE_SW1][PORT1A].gpioNumPresent = 260;
-	CableLed[CABLE_SW1][PORT1B].gpioNumPresent = 261;
-	CableLed[CABLE_SW1][PORT1A].gpioNumLED = 262;
-	CableLed[CABLE_SW1][PORT1B].gpioNumLED = 263;
+	CableLed[CABLE_SW1][PORT1A].gpioNumA32Present = 228;
+	CableLed[CABLE_SW1][PORT1A].gpioNumB9Present = 229;
+	CableLed[CABLE_SW1][PORT1B].gpioNumA32Present = 230;
+	CableLed[CABLE_SW1][PORT1B].gpioNumB9Present = 231;
+	CableLed[CABLE_SW1][PORT1A].gpioNumPresent = 232;
+	CableLed[CABLE_SW1][PORT1B].gpioNumPresent = 233;
+	CableLed[CABLE_SW1][PORT1A].gpioNumLED = 234;
+	CableLed[CABLE_SW1][PORT1B].gpioNumLED = 235;
 
-	CableLed[CABLE_SW1][PORT2A].gpioNumA32Present = 264;
-	CableLed[CABLE_SW1][PORT2A].gpioNumB9Present = 265;
-	CableLed[CABLE_SW1][PORT2B].gpioNumA32Present = 266;
-	CableLed[CABLE_SW1][PORT2B].gpioNumB9Present = 267;
-	CableLed[CABLE_SW1][PORT2A].gpioNumPresent = 268;
-	CableLed[CABLE_SW1][PORT2B].gpioNumPresent = 269;
-	CableLed[CABLE_SW1][PORT2A].gpioNumLED = 270;
-	CableLed[CABLE_SW1][PORT2B].gpioNumLED = 271;
+	CableLed[CABLE_SW1][PORT2A].gpioNumA32Present = 236;
+	CableLed[CABLE_SW1][PORT2A].gpioNumB9Present = 237;
+	CableLed[CABLE_SW1][PORT2B].gpioNumA32Present = 238;
+	CableLed[CABLE_SW1][PORT2B].gpioNumB9Present = 239;
+	CableLed[CABLE_SW1][PORT2A].gpioNumPresent = 240;
+	CableLed[CABLE_SW1][PORT2B].gpioNumPresent = 241;
+	CableLed[CABLE_SW1][PORT2A].gpioNumLED = 242;
+	CableLed[CABLE_SW1][PORT2B].gpioNumLED = 243;
 
-	CableLed[CABLE_SW2][PORT1A].gpioNumA32Present = 272;
-	CableLed[CABLE_SW2][PORT1A].gpioNumB9Present = 273;
-	CableLed[CABLE_SW2][PORT1B].gpioNumA32Present = 274;
-	CableLed[CABLE_SW2][PORT1B].gpioNumB9Present = 275;
-	CableLed[CABLE_SW2][PORT1A].gpioNumPresent = 276;
-	CableLed[CABLE_SW2][PORT1B].gpioNumPresent = 277;
-	CableLed[CABLE_SW2][PORT1A].gpioNumLED = 278;
-	CableLed[CABLE_SW2][PORT1B].gpioNumLED = 279;
+	CableLed[CABLE_SW2][PORT1A].gpioNumA32Present = 244;
+	CableLed[CABLE_SW2][PORT1A].gpioNumB9Present = 245;
+	CableLed[CABLE_SW2][PORT1B].gpioNumA32Present = 246;
+	CableLed[CABLE_SW2][PORT1B].gpioNumB9Present = 247;
+	CableLed[CABLE_SW2][PORT1A].gpioNumPresent = 248;
+	CableLed[CABLE_SW2][PORT1B].gpioNumPresent = 249;
+	CableLed[CABLE_SW2][PORT1A].gpioNumLED = 250;
+	CableLed[CABLE_SW2][PORT1B].gpioNumLED = 251;
 
-	CableLed[CABLE_SW2][PORT2A].gpioNumA32Present = 280;
-	CableLed[CABLE_SW2][PORT2A].gpioNumB9Present = 281;
-	CableLed[CABLE_SW2][PORT2B].gpioNumA32Present = 282;
-	CableLed[CABLE_SW2][PORT2B].gpioNumB9Present = 283;
-	CableLed[CABLE_SW2][PORT2A].gpioNumPresent = 284;
-	CableLed[CABLE_SW2][PORT2B].gpioNumPresent = 285;
-	CableLed[CABLE_SW2][PORT2A].gpioNumLED = 286;
-	CableLed[CABLE_SW2][PORT2B].gpioNumLED = 287;
+	CableLed[CABLE_SW2][PORT2A].gpioNumA32Present = 252;
+	CableLed[CABLE_SW2][PORT2A].gpioNumB9Present = 253;
+	CableLed[CABLE_SW2][PORT2B].gpioNumA32Present = 254;
+	CableLed[CABLE_SW2][PORT2B].gpioNumB9Present = 255;
+	CableLed[CABLE_SW2][PORT2A].gpioNumPresent = 256;
+	CableLed[CABLE_SW2][PORT2B].gpioNumPresent = 257;
+	CableLed[CABLE_SW2][PORT2A].gpioNumLED = 258;
+	CableLed[CABLE_SW2][PORT2B].gpioNumLED = 259;
 
-	CableLed[CABLE_SW3][PORT1A].gpioNumA32Present = 288;
-	CableLed[CABLE_SW3][PORT1A].gpioNumB9Present = 289;
-	CableLed[CABLE_SW3][PORT1B].gpioNumA32Present = 290;
-	CableLed[CABLE_SW3][PORT1B].gpioNumB9Present = 291;
-	CableLed[CABLE_SW3][PORT1A].gpioNumPresent = 292;
-	CableLed[CABLE_SW3][PORT1B].gpioNumPresent = 293;
-	CableLed[CABLE_SW3][PORT1A].gpioNumLED = 294;
-	CableLed[CABLE_SW3][PORT1B].gpioNumLED = 295;
+	CableLed[CABLE_SW3][PORT1A].gpioNumA32Present = 260;
+	CableLed[CABLE_SW3][PORT1A].gpioNumB9Present = 261;
+	CableLed[CABLE_SW3][PORT1B].gpioNumA32Present = 262;
+	CableLed[CABLE_SW3][PORT1B].gpioNumB9Present = 263;
+	CableLed[CABLE_SW3][PORT1A].gpioNumPresent = 264;
+	CableLed[CABLE_SW3][PORT1B].gpioNumPresent = 265;
+	CableLed[CABLE_SW3][PORT1A].gpioNumLED = 266;
+	CableLed[CABLE_SW3][PORT1B].gpioNumLED = 267;
 
-	CableLed[CABLE_SW3][PORT2A].gpioNumA32Present = 296;
-	CableLed[CABLE_SW3][PORT2A].gpioNumB9Present = 297;
-	CableLed[CABLE_SW3][PORT2B].gpioNumA32Present = 298;
-	CableLed[CABLE_SW3][PORT2B].gpioNumB9Present = 299;
-	CableLed[CABLE_SW3][PORT2A].gpioNumPresent = 300;
-	CableLed[CABLE_SW3][PORT2B].gpioNumPresent = 301;
-	CableLed[CABLE_SW3][PORT2A].gpioNumLED = 302;
-	CableLed[CABLE_SW3][PORT2B].gpioNumLED = 303;
+	CableLed[CABLE_SW3][PORT2A].gpioNumA32Present = 268;
+	CableLed[CABLE_SW3][PORT2A].gpioNumB9Present = 269;
+	CableLed[CABLE_SW3][PORT2B].gpioNumA32Present = 270;
+	CableLed[CABLE_SW3][PORT2B].gpioNumB9Present = 271;
+	CableLed[CABLE_SW3][PORT2A].gpioNumPresent = 272;
+	CableLed[CABLE_SW3][PORT2B].gpioNumPresent = 273;
+	CableLed[CABLE_SW3][PORT2A].gpioNumLED = 274;
+	CableLed[CABLE_SW3][PORT2B].gpioNumLED = 275;
 
-	CableLed[CABLE_SW4][PORT1A].gpioNumA32Present = 304;
-	CableLed[CABLE_SW4][PORT1A].gpioNumB9Present = 305;
-	CableLed[CABLE_SW4][PORT1B].gpioNumA32Present = 306;
-	CableLed[CABLE_SW4][PORT1B].gpioNumB9Present = 307;
-	CableLed[CABLE_SW4][PORT1A].gpioNumPresent = 308;
-	CableLed[CABLE_SW4][PORT1B].gpioNumPresent = 309;
-	CableLed[CABLE_SW4][PORT1A].gpioNumLED = 310;
-	CableLed[CABLE_SW4][PORT1B].gpioNumLED = 311;
+	CableLed[CABLE_SW4][PORT1A].gpioNumA32Present = 276;
+	CableLed[CABLE_SW4][PORT1A].gpioNumB9Present = 277;
+	CableLed[CABLE_SW4][PORT1B].gpioNumA32Present = 278;
+	CableLed[CABLE_SW4][PORT1B].gpioNumB9Present = 279;
+	CableLed[CABLE_SW4][PORT1A].gpioNumPresent = 280;
+	CableLed[CABLE_SW4][PORT1B].gpioNumPresent = 281;
+	CableLed[CABLE_SW4][PORT1A].gpioNumLED = 282;
+	CableLed[CABLE_SW4][PORT1B].gpioNumLED = 283;
 
-	CableLed[CABLE_SW4][PORT2A].gpioNumA32Present = 312;
-	CableLed[CABLE_SW4][PORT2A].gpioNumB9Present = 313;
-	CableLed[CABLE_SW4][PORT2B].gpioNumA32Present = 314;
-	CableLed[CABLE_SW4][PORT2B].gpioNumB9Present = 315;
-	CableLed[CABLE_SW4][PORT2A].gpioNumPresent = 316;
-	CableLed[CABLE_SW4][PORT2B].gpioNumPresent = 317;
-	CableLed[CABLE_SW4][PORT2A].gpioNumLED = 318;
-	CableLed[CABLE_SW4][PORT2B].gpioNumLED = 319;
+	CableLed[CABLE_SW4][PORT2A].gpioNumA32Present = 284;
+	CableLed[CABLE_SW4][PORT2A].gpioNumB9Present = 285;
+	CableLed[CABLE_SW4][PORT2B].gpioNumA32Present = 286;
+	CableLed[CABLE_SW4][PORT2B].gpioNumB9Present = 287;
+	CableLed[CABLE_SW4][PORT2A].gpioNumPresent = 288;
+	CableLed[CABLE_SW4][PORT2B].gpioNumPresent = 289;
+	CableLed[CABLE_SW4][PORT2A].gpioNumLED = 290;
+	CableLed[CABLE_SW4][PORT2B].gpioNumLED = 291;
 }
 
 void open_gpio()
