@@ -16,6 +16,8 @@ from obmc.sensors import SensorThresholds as SensorThresholds
 import obmc_system_config as System
 
 SENSOR_BUS = 'org.openbmc.Sensors'
+# sensors include /org/openbmc/sensors and /org/openbmc/control
+SENSORS_OBJPATH = '/org/openbmc'
 SENSOR_PATH = '/org/openbmc/sensors'
 DIR_POLL_INTERVAL = 30000
 HWMON_PATH = '/sys/class/hwmon'
@@ -44,6 +46,8 @@ class Hwmons():
 		self.sensors = { }
 		self.hwmon_root = { }
 		self.threshold_state = {}
+		self.pgood_obj = bus.get_object('org.openbmc.control.Power', '/org/openbmc/control/power0', introspect=False)
+		self.pgood_intf = dbus.Interface(self.pgood_obj,dbus.PROPERTIES_IFACE)
 		self.scanDirectory()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)   
 
@@ -116,8 +120,21 @@ class Hwmons():
 		return current_state
 
 
-	def poll(self,objpath,attribute):
+	def poll(self,objpath,attribute,hwmon):
 		try:
+			standby_monitor = True
+			if hwmon.has_key('standby_monitor'):
+				standby_monitor = hwmon['standby_monitor']
+			# Skip monitor while DC power off if stand by monitor is False
+			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
+			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
+			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			if not standby_monitor:
+				if  current_pgood == 0:
+					intf_p.Set(SensorValue.IFACE_NAME,'value','N/A')
+					return True
+
 			raw_value = int(self.readAttribute(attribute))
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
@@ -193,7 +210,7 @@ class Hwmons():
 	
 	def addObject(self,dpath,hwmon_path,hwmon):
 		objsuf = hwmon['object_path']
-		objpath = SENSOR_PATH+'/'+objsuf
+		objpath = SENSORS_OBJPATH+'/'+objsuf
 		
 		if (self.sensors.has_key(objpath) == False):
 			print "HWMON add: "+objpath+" : "+hwmon_path
@@ -207,6 +224,8 @@ class Hwmons():
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 			intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+			# init value as N/A
+			intf.Set(SensorValue.IFACE_NAME,'value','N/A')
 			
 			## check if one of thresholds is defined to know
 			## whether to enable thresholds or not
@@ -222,7 +241,7 @@ class Hwmons():
 			self.hwmon_root[dpath].append(objpath)
 			self.threshold_state[objpath] = "NORMAL"
 
-			gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
+			gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path,hwmon)
 
 	def addSensorMonitorObject(self):
 		if "SENSOR_MONITOR_CONFIG" not in dir(System):
@@ -262,7 +281,8 @@ class Hwmons():
 
 				self.sensors[objpath]=True
 				self.threshold_state[objpath] = "NORMAL"
-				gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
+				if hwmon.has_key('poll_interval'):
+					gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path,hwmon)
 	
 	def scanDirectory(self):
 	 	devices = os.listdir(HWMON_PATH)
