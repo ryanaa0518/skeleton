@@ -61,6 +61,60 @@ class Hwmons():
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
+	def check_thresholds(self, threshold_props, value, hwmon):
+		sn = hwmon['sensornumber']
+		thresholds = ['critical_upper', 'critical_lower', \
+						'warning_upper', 'warning_lower']
+		if hwmon['thresholds_enabled'] is False:
+			return "NORMAL"
+		for threshold in thresholds:
+			try:
+				hwmon[threshold] = threshold_props[threshold+'_'+str(sn)]
+			except KeyError:
+				pass
+		current_state = hwmon['threshold_state']
+		if current_state.find("NORMAL") != -1:
+			if (hwmon['critical_upper'] != None) and \
+					(value >= hwmon['critical_upper']):
+				current_state = "UPPER_CRITICAL"
+			elif (hwmon['critical_lower'] != None) and \
+					(value <= hwmon['critical_lower']):
+				current_state = "LOWER_CRITICAL"
+			elif (hwmon['warning_upper'] != None) and \
+					(value >= hwmon['warning_upper']):
+				current_state = "UPPER_WARNING"
+			elif (hwmon['warning_lower'] != None) and \
+					(value <= hwmon['warning_lower']):
+				current_state = "LOWER_WARNING"
+		elif current_state.find("UPPER_CRITICAL") >= 0:
+			if (hwmon['critical_upper'] != None) and \
+					(value <= hwmon['critical_upper'] -
+							(hwmon['positive_hysteresis'] + 1)):
+				current_state = "NORMAL"
+		elif current_state.find("LOWER_CRITICAL") >= 0:
+			if (hwmon['critical_lower'] != None) and \
+					(value >= hwmon['critical_lower'] +
+							(hwmon['negative_hysteresis'] + 1)):
+				current_state = "NORMAL"
+		elif current_state.find("UPPER_WARNING") >= 0:
+			if (hwmon['warning_upper'] != None) and \
+					(value <= hwmon['warning_upper'] -
+							(hwmon['positive_hysteresis'] + 1)):
+				current_state = "NORMAL"
+		elif current_state.find("LOWER_WARNING") >= 0:
+			if (hwmon['warning_lower'] != None) and \
+					(value >= hwmon['warning_lower'] +
+							(hwmon['negative_hysteresis'] + 1)):
+				current_state = "NORMAL"
+
+		hwmon['threshold_state'] = current_state
+		worst = hwmon['worst_threshold_state']
+		if (current_state.find("CRITICAL") != -1 or
+				(current_state.find("WARNING") != -1 and worst.find("CRITICAL") == -1)):
+			hwmon['worst_threshold_state'] = current_state
+
+		return current_state
+
 
 	def poll(self,objpath,attribute):
 		try:
@@ -73,19 +127,21 @@ class Hwmons():
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
+				origin_threshold_type = self.threshold_state[objpath]
+				self.threshold_state[objpath]  = threshold_state
 				if threshold_state == 'NORMAL':
-					threshold_type = self.threshold_state[objpath]
+					origin_threshold_type  = self.threshold_state[objpath]
 					event_dir = 'Deasserted'
 				else:
-					threshold_type = threshold_state
+					origin_threshold_type  = threshold_state
 					event_dir = 'Asserted'
-					
+				self.threshold_state[objpath]  = threshold_state
 				scale = intf_p.Get(HwmonSensor.IFACE_NAME, 'scale')
 				real_reading = raw_value / scale
-				self.LogThresholdEventMessages(objpath, threshold_state, event_dir, real_reading)
-				self.threshold_state[objpath]  = threshold_state
+				self.LogThresholdEventMessages(objpath, threshold_state, origin_threshold_type, event_dir, real_reading)
 		except:
 			print "HWMON: Attibute no longer exists: "+attribute
+			raw_value = "N/A"
 			self.sensors.pop(objpath,None)
 			return False
 
@@ -93,7 +149,7 @@ class Hwmons():
 		return True
 
 
-	def LogThresholdEventMessages(self, objpath, threshold_type, event_dir, reading):
+	def LogThresholdEventMessages(self, objpath, threshold_type, origin_threshold_type, event_dir, reading):
 	
 		obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
@@ -105,10 +161,18 @@ class Hwmons():
 		#Get event messages
 		if threshold_type == 'UPPER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
-			desc = sensor_name+' '+threshold_type_str+' going high-'+event_dir+" | Reading "+str(reading)+", Threshold "+str(threshold)
-		else:
+			desc = sensor_name+' '+threshold_type_str+' going high-'+event_dir+": Reading "+str(reading)+", Threshold "+str(threshold)
+		elif threshold_type == 'LOWER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_lower')
-			desc = sensor_name+' '+threshold_type_str+' going low-'+event_dir+":Reading "+str(reading)+", Threshold "+str(threshold)
+			desc = sensor_name+' '+threshold_type_str+' going low-'+event_dir+": Reading "+str(reading)+", Threshold "+str(threshold)
+		else:
+			threshold = 'N/A'
+			if origin_threshold_type == 'UPPER_CRITICAL':
+				threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
+			if origin_threshold_type == 'LOWER_CRITICAL':
+				threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_lower')
+			print str(threshold) + ' back to normal\n'
+			desc = sensor_name+' '+threshold_type_str+' '+event_dir+" from "+str(origin_threshold_type)+": Reading "+str(reading)+", Threshold "+str(threshold)
 
 		#Get Severity
 		if event_dir == 'Asserted':
@@ -183,6 +247,9 @@ class Hwmons():
 				obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 				intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 				intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+
+				# init value as N/A
+				intf.Set(SensorValue.IFACE_NAME,'value','N/A')
 
 				## check if one of thresholds is defined to know
 				## whether to enable thresholds or not
