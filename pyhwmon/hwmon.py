@@ -48,11 +48,12 @@ class Hwmons():
 		self.threshold_state = {}
 		self.pgood_obj = bus.get_object('org.openbmc.control.Power', '/org/openbmc/control/power0', introspect=False)
 		self.pgood_intf = dbus.Interface(self.pgood_obj,dbus.PROPERTIES_IFACE)
+		self.path_mapping = {}
 		self.scanDirectory()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)   
 
 	def readAttribute(self,filename):
-		val = "N/A"
+		val = "-1"
 		try:
 			with open(filename, 'r') as f:
 				for line in f:
@@ -126,22 +127,23 @@ class Hwmons():
 			if hwmon.has_key('standby_monitor'):
 				standby_monitor = hwmon['standby_monitor']
 			# Skip monitor while DC power off if stand by monitor is False
-			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
+
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			raw_value = int(self.readAttribute(attribute))
+			rtn = intf.setByPoll(raw_value)
+			if (rtn[0] == True):
+				self.writeAttribute(attribute,rtn[1])
 			if not standby_monitor:
+				current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 				if  current_pgood == 0:
 					intf_p.Set(SensorValue.IFACE_NAME,'value','N/A')
 					return True
 
-			raw_value = int(self.readAttribute(attribute))
-			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
-			rtn = intf.setByPoll(raw_value)
-			if (rtn[0] == True):
-				self.writeAttribute(attribute,rtn[1])
-			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			# do not check threshold while not reading
+			if raw_value == -1:
+				return True
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
@@ -160,7 +162,7 @@ class Hwmons():
 			print "HWMON: Attibute no longer exists: "+attribute
 			raw_value = "N/A"
 			self.sensors.pop(objpath,None)
-			return False
+			return True
 
 
 		return True
@@ -224,8 +226,6 @@ class Hwmons():
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 			intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
-			# init value as N/A
-			intf.Set(SensorValue.IFACE_NAME,'value','N/A')
 			
 			## check if one of thresholds is defined to know
 			## whether to enable thresholds or not
@@ -251,11 +251,17 @@ class Hwmons():
 			objpath = System.SENSOR_MONITOR_CONFIG[i][0]
 			hwmon = System.SENSOR_MONITOR_CONFIG[i][1]
 
-			if 'object_path' not in hwmon or len(hwmon['object_path'])==0:
-				print "Warnning[addSensorMonitorObject]: Not correct set [object_path]"
+			if 'device_node' not in hwmon:
+				print "Warnning[addSensorMonitorObject]: Not correct set [device_node]"
 				continue
 
-			hwmon_path = hwmon['object_path']
+			if 'bus_number' in hwmon:
+				if hwmon['bus_number'] in self.path_mapping:
+					hwmon_path = self.path_mapping[hwmon['bus_number']] + hwmon['device_node']
+				else:
+					hwmon_path = 'N/A'
+			else:
+				hwmon_path = hwmon['device_node']
 			if (self.sensors.has_key(objpath) == False):
 				## register object with sensor manager
 				obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
@@ -267,8 +273,12 @@ class Hwmons():
 				intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 				intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
 
-				# init value as N/A
-				intf.Set(SensorValue.IFACE_NAME,'value','N/A')
+				# init value as
+				val = -1
+				if hwmon.has_key('value'):
+					val = hwmon['value']
+					intf_h = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+					intf_h.setByPoll(val)
 
 				## check if one of thresholds is defined to know
 				## whether to enable thresholds or not
@@ -288,6 +298,7 @@ class Hwmons():
 	 	devices = os.listdir(HWMON_PATH)
 		found_hwmon = {}
 		regx = re.compile('([a-z]+)\d+\_')
+		self.path_mapping = {}
 		for d in devices:
 			dpath = HWMON_PATH+'/'+d+'/'
 			found_hwmon[dpath] = True
@@ -295,7 +306,7 @@ class Hwmons():
 				self.hwmon_root[dpath] = []
 			## the instance name is a soft link
 			instance_name = os.path.realpath(dpath+'device').split('/').pop()
-			
+			self.path_mapping[instance_name] = dpath
 			
 			if (System.HWMON_CONFIG.has_key(instance_name)):
 				hwmon = System.HWMON_CONFIG[instance_name]
