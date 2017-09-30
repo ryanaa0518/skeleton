@@ -316,7 +316,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 37,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'FIO Inlet 1 Temp'
+							'sensor_name' : 'FIO Inlet 1 Temp', 
+							'sensornumber':'0x5', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/temperature/TMP10', {
@@ -327,7 +329,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 37,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'FIO Inlet 2 Temp'
+							'sensor_name' : 'FIO Inlet 2 Temp', 
+							'sensornumber':'0x6', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/temperature/TMP11', {
@@ -338,7 +342,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 37,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'CM Outlet Temp'
+							'sensor_name' : 'CM Outlet Temp', 
+							'sensornumber':'0x7', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu1_temp', { 
@@ -349,7 +355,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU1 Temp'
+							'sensor_name' : 'GPU1 Temp', 
+							'sensornumber':'0x41', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu2_temp', {
@@ -360,7 +368,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU2 Temp'
+							'sensor_name' : 'GPU2 Temp',
+							'sensornumber':'0x42', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu3_temp', { 
@@ -371,7 +381,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU3 Temp'
+							'sensor_name' : 'GPU3 Temp',
+							'sensornumber':'0x43', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu4_temp', { 
@@ -382,7 +394,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower': '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU4 Temp'
+							'sensor_name' : 'GPU4 Temp',
+							'sensornumber':'0x44', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu5_temp', {
@@ -393,7 +407,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU5 Temp'
+							'sensor_name' : 'GPU5 Temp',
+							'sensornumber':'0x45', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu6_temp', {
@@ -405,6 +421,8 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_lower' : '',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU6 Temp',
+							'sensornumber':'0x46', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu7_temp', { 
@@ -416,6 +434,8 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_lower': '',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU7 Temp',
+							'sensornumber':'0x47', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu8_temp', { 
@@ -426,7 +446,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : 81,
 							'critical_lower' : '',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU8 Temp'
+							'sensor_name' : 'GPU8 Temp',
+							'sensornumber':'0x48', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/control/fan/fan1', { 
@@ -437,7 +459,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 1'
+							'sensor_name' : 'PWM 1',
+							'sensornumber':'0x1D', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/control/fan/fan2', {
@@ -448,7 +472,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 2'
+							'sensor_name' : 'PWM 2',
+							'sensornumber':'0x1E', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/control/fan/fan3', {
@@ -459,7 +485,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name':'PWM 3'
+							'sensor_name':'PWM 3',
+							'sensornumber':'0x1F', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/control/fan/fan4', {
@@ -470,7 +498,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 4'
+							'sensor_name' : 'PWM 4',
+							'sensornumber':'0x20', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/control/fan/fan5', {
@@ -481,7 +511,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 5'
+							'sensor_name' : 'PWM 5',
+							'sensornumber':'0x21', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/control/fan/fan6', {
@@ -492,7 +524,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 18,
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 6'
+							'sensor_name' : 'PWM 6',
+							'sensornumber':'0x22', 
+							'standby_monitor': False
 					}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho1', { 
@@ -503,7 +537,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 1'
+							'sensor_name' : 'Fan Tach 1',
+							'sensornumber':'0x11', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho2', {
@@ -514,7 +550,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 2'
+							'sensor_name' : 'Fan Tach 2',
+							'sensornumber':'0x12', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho3', {
@@ -525,7 +563,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 3'
+							'sensor_name' : 'Fan Tach 3',
+							'sensornumber':'0x13', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho4', {
@@ -536,7 +576,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 4'
+							'sensor_name' : 'Fan Tach 4',
+							'sensornumber':'0x14', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho5', {
@@ -547,7 +589,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 5'
+							'sensor_name' : 'Fan Tach 5',
+							'sensornumber':'0x15', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho6', {
@@ -558,7 +602,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 6'
+							'sensor_name' : 'Fan Tach 6',
+							'sensornumber':'0x16', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho7', {
@@ -569,7 +615,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 7'
+							'sensor_name' : 'Fan Tach 7',
+							'sensornumber':'0x17', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho8', {
@@ -581,7 +629,9 @@ SENSOR_MONITOR_CONFIG = [
                                                         'critical_lower' : 3800,
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 8'
+							'sensor_name' : 'Fan Tach 8',
+							'sensornumber':'0x18', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho9', {
@@ -592,7 +642,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 9'
+							'sensor_name' : 'Fan Tach 9',
+							'sensornumber':'0x19', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho10', {
@@ -603,7 +655,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 10'
+							'sensor_name' : 'Fan Tach 10',
+							'sensornumber':'0x1A', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho11', {
@@ -614,7 +668,9 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 11'
+							'sensor_name' : 'Fan Tach 11',
+							'sensornumber':'0x1B', 
+							'standby_monitor': False
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho12', {
@@ -625,30 +681,10 @@ SENSOR_MONITOR_CONFIG = [
 							'critical_upper' : '',
 							'critical_lower' : 3800,
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 12'
+							'sensor_name' : 'Fan Tach 12',
+							'sensornumber':'0x1C', 
+							'standby_monitor': False
 						}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus01/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon12/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Fan'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus01/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon12/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Temp 1'
-							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/temp_02', {
 								'object_path' : '/sys/class/hwmon/hwmon12/temp2_input',
@@ -658,18 +694,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus01/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon12/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Temp 3'
+								'sensor_name' : 'PSU1 Temp 2',
+								'sensornumber':'0x50', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Voltage_vin', {
@@ -680,7 +707,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type':'0x01',
-								'sensor_name' : 'PSU1 Voltage Input'
+								'sensor_name' : 'PSU1 Voltage Input',
+								'sensornumber':'0x51', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Voltage_vout', {
@@ -691,7 +720,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Voltage Output'
+								'sensor_name' : 'PSU1 Voltage Output',
+								'sensornumber':'0x52', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Current_iin', {
@@ -702,7 +733,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Current Input'
+								'sensor_name' : 'PSU1 Current Input',
+								'sensornumber':'0x53', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Current_iout', {
@@ -713,7 +746,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Current Output'
+								'sensor_name' : 'PSU1 Current Output',
+								'sensornumber':'0x54', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Power_pin', {
@@ -724,7 +759,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Power Input'
+								'sensor_name' : 'PSU1 Power Input',
+								'sensornumber':'0x55', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Power_pout', {
@@ -735,29 +772,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Power Output'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus02/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon13/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Fan'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus02/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon13/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Temp 1'
+								'sensor_name' : 'PSU1 Power Output',
+								'sensornumber':'0x56', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/temp_02', {
@@ -768,18 +785,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus02/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon13/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Temp 3'
+								'sensor_name' : 'PSU2 Temp 2',
+								'sensornumber':'0x57', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Voltage_vin', {
@@ -790,7 +798,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Voltage Input'
+								'sensor_name' : 'PSU2 Voltage Input',
+								'sensornumber':'0x58', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Voltage_vout', {
@@ -801,7 +811,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Voltage Output'
+								'sensor_name' : 'PSU2 Voltage Output',
+								'sensornumber':'0x59', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Current_iin', {
@@ -812,7 +824,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type': '0x01',
-								'sensor_name': 'PSU2 Current Input'
+								'sensor_name': 'PSU2 Current Input',
+								'sensornumber':'0x5A', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Current_iout', {
@@ -823,7 +837,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Current Output'
+								'sensor_name' : 'PSU2 Current Output',
+								'sensornumber':'0x5B', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Power_pin', {
@@ -834,7 +850,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Power Input'
+								'sensor_name' : 'PSU2 Power Input',
+								'sensornumber':'0x5C', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Power_pout', {
@@ -845,29 +863,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Power Output'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus03/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon14/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Fan'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus03/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon14/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Temp 1'
+								'sensor_name' : 'PSU2 Power Output',
+								'sensornumber':'0x5D', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/temp_02', {
@@ -878,18 +876,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus03/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon14/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Temp 3'
+								'sensor_name' : 'PSU3 Temp 2',
+								'sensornumber':'0x5E', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Voltage_vin', {
@@ -900,7 +889,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Voltage Input'
+								'sensor_name' : 'PSU3 Voltage Input',
+								'sensornumber':'0x5F', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Voltage_vout', {
@@ -911,7 +902,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Voltage Output'
+								'sensor_name' : 'PSU3 Voltage Output',
+								'sensornumber':'0x60', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Current_iin', {
@@ -922,7 +915,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Current Input'
+								'sensor_name' : 'PSU3 Current Input',
+								'sensornumber':'0x61', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Current_iout', {
@@ -933,7 +928,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Current Output'
+								'sensor_name' : 'PSU3 Current Output',
+								'sensornumber':'0x62', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Power_pin', {
@@ -944,7 +941,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01', 
-								'sensor_name' : 'PSU3 Power Input'
+								'sensor_name' : 'PSU3 Power Input',
+								'sensornumber':'0x63', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Power_pout', {
@@ -956,31 +955,12 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '', 
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Power Output'
+								'sensor_name' : 'PSU3 Power Output',
+								'sensornumber':'0x64', 
+								'standby_monitor': True
 							}
 	],
-	['/org/openbmc/sensors/pmbus/pmbus04/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon15/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Fan'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus04/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon15/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Temp 1'
-							}
-	],
+	
 	['/org/openbmc/sensors/pmbus/pmbus04/temp_02', {
 								'object_path' : '/sys/class/hwmon/hwmon15/temp2_input',
 								'poll_interval' : 10000,
@@ -989,19 +969,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus04/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon15/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'value' : 0,
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Temp 3'
+								'sensor_name' : 'PSU4 Temp 2',
+								'sensornumber':'0x65', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Voltage_vin', {
@@ -1012,7 +982,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Voltage Input'
+								'sensor_name' : 'PSU4 Voltage Input',
+								'sensornumber':'0x66', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Voltage_vout', {
@@ -1023,7 +995,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Voltage Output'
+								'sensor_name' : 'PSU4 Voltage Output',
+								'sensornumber':'0x67', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Current_iin', {
@@ -1035,7 +1009,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Current Input'
+								'sensor_name' : 'PSU4 Current Input',
+								'sensornumber':'0x68', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Current_iout', {
@@ -1046,7 +1022,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Current Output'
+								'sensor_name' : 'PSU4 Current Output',
+								'sensornumber':'0x69', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Power_pin', {
@@ -1057,7 +1035,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Current Input'
+								'sensor_name' : 'PSU4 Current Input',
+								'sensornumber':'0x6A', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Power_pout', {
@@ -1069,29 +1049,11 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Power Output'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus05/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon16/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Fan'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus05/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon16/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Temp 1'
+								'sensor_name' : 'PSU4 Power Output',
+								'sensornumber':'0x64', 
+								'standby_monitor': True,
+								'sensornumber':'0x6B', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/temp_02', {
@@ -1102,18 +1064,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus05/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon16/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Temp 3'
+								'sensor_name' : 'PSU5 Temp 2',
+								'sensornumber':'0x6C', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Voltage_vin', {
@@ -1124,7 +1077,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Voltage Input'
+								'sensor_name' : 'PSU5 Voltage Input',
+								'sensornumber':'0x6D', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Voltage_vout', {
@@ -1135,7 +1090,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Voltage Output'
+								'sensor_name' : 'PSU5 Voltage Output',
+								'sensornumber':'0x6E', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Current_iin', {
@@ -1146,7 +1103,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Current Input'
+								'sensor_name' : 'PSU5 Current Input',
+								'sensornumber':'0x6F', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Current_iout', {
@@ -1157,7 +1116,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Current Output'
+								'sensor_name' : 'PSU5 Current Output',
+								'sensornumber':'0x70', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Power_pin', {
@@ -1168,7 +1129,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Power Input'
+								'sensor_name' : 'PSU5 Power Input',
+								'sensornumber':'0x71', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Power_pout', {
@@ -1179,29 +1142,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Power Output'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus06/fan', {
-								'object_path' : '/sys/class/hwmon/hwmon17/fan1_input',
-								'poll_interval' : 10000,
-								'scale' : 1,
-								'units' : 'rpm',
-								'critical_upper' : '',
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Fan'
-						}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus06/temp_01', {
-								'object_path' : '/sys/class/hwmon/hwmon17/temp1_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Temp 1'
+								'sensor_name' : 'PSU5 Power Output',
+								'sensornumber':'0x72', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/temp_02', {
@@ -1212,18 +1155,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 95,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Temp 2'
-							}
-	],
-	['/org/openbmc/sensors/pmbus/pmbus06/temp_03', {
-								'object_path' : '/sys/class/hwmon/hwmon17/temp3_input',
-								'poll_interval' : 10000,
-								'scale' : 1000,
-								'units' : 'C',
-								'critical_upper' : 95,
-								'critical_lower' : '',
-								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Temp 3'
+								'sensor_name' : 'PSU6 Temp 2',
+								'sensornumber':'0x73', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Voltage_vin', {
@@ -1234,7 +1168,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Voltage Input'
+								'sensor_name' : 'PSU6 Voltage Input',
+								'sensornumber':'0x74', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Voltage_vout', {
@@ -1245,7 +1181,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 14.25,
 								'critical_lower' : 10.5,
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Voltage Output'
+								'sensor_name' : 'PSU6 Voltage Output',
+								'sensornumber':'0x75', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Current_iin', {
@@ -1256,7 +1194,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Current Input'
+								'sensor_name' : 'PSU6 Current Input',
+								'sensornumber':'0x76', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Current_iout', {
@@ -1267,7 +1207,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Current Output'
+								'sensor_name' : 'PSU6 Current Output',
+								'sensornumber':'0x77', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Power_pin', {
@@ -1278,7 +1220,9 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : '',
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Power Input'
+								'sensor_name' : 'PSU6 Power Input',
+								'sensornumber':'0x78', 
+								'standby_monitor': True
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Power_pout', {
@@ -1289,7 +1233,22 @@ SENSOR_MONITOR_CONFIG = [
 								'critical_upper' : 1760,
 								'critical_lower' : '',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Power Output'
+								'sensor_name' : 'PSU6 Power Output',
+								'sensornumber':'0x79', 
+								'standby_monitor': True
+							}
+	],
+	['/org/openbmc/sensors/sensors/system_event', {
+								'object_path' : '/org/openbmc/sensors/sensors/system_event',
+								'poll_interval' : 10000,
+								'scale' : 1000000,
+								'units' : '',
+								'critical_upper' : '',
+								'critical_lower' : '',
+								'reading_type' : '0x72',
+								'sensor_name' : 'System Event',
+								'sensornumber':'0x80', 
+								'standby_monitor': False
 							}
 	],
 ]
@@ -1305,7 +1264,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Inlet Temp 1'
+				'sensor_name' : 'Inlet Temp 1', 
+				'standby_monitor': False
 				},
 			}
 		},
@@ -1319,7 +1279,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Inlet Temp 2'
+				'sensor_name' : 'Inlet Temp 2', 
+				'standby_monitor': False
 				},
 			}
 		},
@@ -1333,7 +1294,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Inlet Temp 3'
+				'sensor_name' : 'Inlet Temp 3', 
+				'standby_monitor': False
 				},
 			}
 		},
@@ -1347,7 +1309,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Inlet Temp 4'
+				'sensor_name' : 'Inlet Temp 4', 
+				'standby_monitor': False
 				},
 			}			
 		},
@@ -1361,7 +1324,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Outlet Temp 5'
+				'sensor_name' : 'Outlet Temp 5', 
+				'standby_monitor': False
 				},
 			}			
 		},
@@ -1375,7 +1339,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Outlet Temp 6'
+				'sensor_name' : 'Outlet Temp 6', 
+				'standby_monitor': False
 				},
 			}	
 		},
@@ -1389,7 +1354,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Outlet Temp 7'
+				'sensor_name' : 'Outlet Temp 7', 
+				'standby_monitor': False
 				},
 			}
 		},
@@ -1403,7 +1369,8 @@ HWMON_CONFIG = {
 				'critical_upper' : 37,
 				'critical_lower' : '',
 				'reading_type' : '0x01',
-				'sensor_name' : 'Outlet Temp 8'
+				'sensor_name' : 'Outlet Temp 8', 
+				'standby_monitor': False
 				},
 			}
 		},

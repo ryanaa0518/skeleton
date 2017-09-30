@@ -40,7 +40,6 @@ IFACE_LOOKUP = {
 	'reading_type': HwmonSensor.IFACE_NAME,
 	'min_reading': HwmonSensor.IFACE_NAME,
 	'max_reading': HwmonSensor.IFACE_NAME,
-	'standby_monitor': HwmonSensor.IFACE_NAME,
 }
 
 class Hwmons():
@@ -48,9 +47,7 @@ class Hwmons():
 		self.sensors = { }
 		self.hwmon_root = { }
 		self.threshold_state = {}
-		self.pgood_obj = bus.get_object('org.openbmc.control.Power', '/org/openbmc/control/power0', introspect=False)
-		self.pgood_intf = dbus.Interface(self.pgood_obj,dbus.PROPERTIES_IFACE)
-		self.path_mapping = {}
+		self.record_pgood = 0
 		self.scanDirectory()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)   
 
@@ -122,6 +119,22 @@ class Hwmons():
 
 		return current_state
 
+	def check_system_event(self, current_pgood):
+		try:
+			system_event_objpath = "/org/openbmc/sensors/system_event"
+			if self.record_pgood != current_pgood:
+				result = {'logid':0}
+				if current_pgood == 1: #current poweroff->poweron condition
+					result = bmclogevent_ctl.BmcLogEventMessages(system_event_objpath, "System Event", \
+						"Asserted",  "System Event PowerOn", "System Event PowerOn")
+				elif current_pgood == 0: #current poweron->poweroff condition
+					result = bmclogevent_ctl.BmcLogEventMessages(system_event_objpath, "System Event", \
+						"Asserted",  "System Event PowerOff", "System Event PowerOff")
+
+				if (result['logid'] !=0):
+					self.record_pgood = current_pgood
+			except:
+				pass
 
 	def poll(self,objpath,attribute,hwmon):
 		try:
@@ -187,7 +200,7 @@ class Hwmons():
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 		sensortype = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_type')
 		sensor_number = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
-		sensor_name = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_name')
+		sensor_name = objpath.split('/').pop()
 		threshold_type_str = threshold_type.title().replace('_', ' ')
 
 		#Get event messages
@@ -264,17 +277,11 @@ class Hwmons():
 			objpath = System.SENSOR_MONITOR_CONFIG[i][0]
 			hwmon = System.SENSOR_MONITOR_CONFIG[i][1]
 
-			if 'device_node' not in hwmon:
-				print "Warnning[addSensorMonitorObject]: Not correct set [device_node]"
+			if 'object_path' not in hwmon:
+				print "Warnning[addSensorMonitorObject]: Not correct set [object_path]"
 				continue
 
-			if 'bus_number' in hwmon:
-				if hwmon['bus_number'] in self.path_mapping:
-					hwmon_path = self.path_mapping[hwmon['bus_number']] + hwmon['device_node']
-				else:
-					hwmon_path = 'N/A'
-			else:
-				hwmon_path = hwmon['device_node']
+			hwmon_path = hwmon['object_path']
 			if (self.sensors.has_key(objpath) == False):
 				## register object with sensor manager
 				obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
@@ -311,7 +318,6 @@ class Hwmons():
 	 	devices = os.listdir(HWMON_PATH)
 		found_hwmon = {}
 		regx = re.compile('([a-z]+)\d+\_')
-		self.path_mapping = {}
 		for d in devices:
 			dpath = HWMON_PATH+'/'+d+'/'
 			found_hwmon[dpath] = True
