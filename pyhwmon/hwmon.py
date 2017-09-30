@@ -14,6 +14,7 @@ from obmc.sensors import SensorValue as SensorValue
 from obmc.sensors import HwmonSensor as HwmonSensor
 from obmc.sensors import SensorThresholds as SensorThresholds
 import obmc_system_config as System
+import traceback
 
 SENSOR_BUS = 'org.openbmc.Sensors'
 # sensors include /org/openbmc/sensors and /org/openbmc/control
@@ -140,9 +141,12 @@ class Hwmons():
 						self.writeAttribute(attribute,rtn[1])
 					return True
 
+			# skip get sensor readings while dc on/off in progress
+			dc_on_off = self.pgood_intf.Get('org.openbmc.control.Power', 'dc_on_off')
+			if dc_on_off == 1:
+				return True
 			raw_value = int(self.readAttribute(attribute))
 			rtn = intf.setByPoll(raw_value)
-			raw_value = int(self.readAttribute(attribute))
 			if (rtn[0] == True):
 				self.writeAttribute(attribute,rtn[1])			
 			
@@ -152,6 +156,10 @@ class Hwmons():
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
+				dc_on_off = self.pgood_intf.Get('org.openbmc.control.Power', 'dc_on_off')
+				if dc_on_off == 1:
+					intf_p.Set(SensorThresholds.IFACE_NAME, 'threshold_state', 'NORMAL')
+					return True
 				self.threshold_state[objpath]  = threshold_state
 				if threshold_state == 'NORMAL':
 					origin_threshold_type  = self.threshold_state[objpath]
@@ -179,7 +187,7 @@ class Hwmons():
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 		sensortype = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_type')
 		sensor_number = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
-		sensor_name = objpath.split('/').pop()
+		sensor_name = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_name')
 		threshold_type_str = threshold_type.title().replace('_', ' ')
 
 		#Get event messages
