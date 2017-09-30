@@ -39,6 +39,7 @@ IFACE_LOOKUP = {
 	'reading_type': HwmonSensor.IFACE_NAME,
 	'min_reading': HwmonSensor.IFACE_NAME,
 	'max_reading': HwmonSensor.IFACE_NAME,
+	'standby_monitor': HwmonSensor.IFACE_NAME,
 }
 
 class Hwmons():
@@ -131,16 +132,20 @@ class Hwmons():
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
-			raw_value = int(self.readAttribute(attribute))
-			rtn = intf.setByPoll(raw_value)
-			if (rtn[0] == True):
-				self.writeAttribute(attribute,rtn[1])
 			if not standby_monitor:
 				current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 				if  current_pgood == 0:
-					intf_p.Set(SensorValue.IFACE_NAME,'value','N/A')
+					rtn = intf.setByPoll(-1)
+					if (rtn[0] == True):
+						self.writeAttribute(attribute,rtn[1])
 					return True
 
+			raw_value = int(self.readAttribute(attribute))
+			rtn = intf.setByPoll(raw_value)
+			raw_value = int(self.readAttribute(attribute))
+			if (rtn[0] == True):
+				self.writeAttribute(attribute,rtn[1])			
+			
 			# do not check threshold while not reading
 			if raw_value == -1:
 				return True
