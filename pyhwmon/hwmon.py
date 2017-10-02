@@ -341,7 +341,6 @@ class Hwmons():
 				self.hwmon_root[dpath] = []
 			## the instance name is a soft link
 			instance_name = os.path.realpath(dpath+'device').split('/').pop()
-			self.path_mapping[instance_name] = dpath
 			
 			if (System.HWMON_CONFIG.has_key(instance_name)):
 				hwmon = System.HWMON_CONFIG[instance_name]
