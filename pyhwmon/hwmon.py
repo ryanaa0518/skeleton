@@ -126,16 +126,30 @@ class Hwmons():
 			if self.record_pgood != current_pgood:
 				result = {'logid':0}
 				if current_pgood == 1: #current poweroff->poweron condition
-					result = bmclogevent_ctl.BmcLogEventMessages(system_event_objpath, "System Event", \
-						"Asserted",  "System Event PowerOn", "System Event PowerOn")
+					sev = "Information"
+					desc = "System Event"+' '+"Asserted"+' '+"System Event PowerOn"+' '+"System Event PowerOn"
+					details = ""
+					debug = dbus.ByteArray("")
+					event_obj = bus.get_object("org.openbmc.records.events",
+									"/org/openbmc/records/events",
+									introspect=False)
+					event_intf = dbus.Interface(event_obj, "org.openbmc.recordlog")
+					event_intf.acceptBMCMessage(sev, desc, str(sensortype), str(sensor_number), details, debug)
 				elif current_pgood == 0: #current poweron->poweroff condition
-					result = bmclogevent_ctl.BmcLogEventMessages(system_event_objpath, "System Event", \
-						"Asserted",  "System Event PowerOff", "System Event PowerOff")
+					sev = "Information"
+					desc = "System Event"+' '+"Asserted"+' '+"System Event PowerOff"+' '+"System Event PowerOff"
+					details = ""
+					debug = dbus.ByteArray("")
+					event_obj = bus.get_object("org.openbmc.records.events",
+									"/org/openbmc/records/events",
+									introspect=False)
+					event_intf = dbus.Interface(event_obj, "org.openbmc.recordlog")
+					event_intf.acceptBMCMessage(sev, desc, str(sensortype), str(sensor_number), details, debug)
 
 				if (result['logid'] !=0):
 					self.record_pgood = current_pgood
-			except:
-				pass
+		except:
+			pass
 
 	def poll(self,objpath,attribute,hwmon):
 		try:
@@ -147,8 +161,9 @@ class Hwmons():
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
+			self.check_system_event(current_pgood)
 			if not standby_monitor:
-				current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 				if  current_pgood == 0:
 					rtn = intf.setByPoll(-1)
 					if (rtn[0] == True):
