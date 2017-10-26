@@ -26,7 +26,7 @@ typedef enum {
 } EM_PWM_NODE_CMD;
 
 #define FAN_DBUS_OBJ_ROOT "/org/openbmc"
-#define FAN_DBUS_OBJ_FORMAT "fan%d"
+#define FAN_DBUS_OBJ_FORMAT "pwm%d"
 #define FAN_TACH_DBUS_OBJ_FORMAT "fan_tacho%d"
 #define FAN_DBUS "org.openbmc"
 #define FAN_INTFERFACE "org.openbmc.Fan"
@@ -89,15 +89,21 @@ sys_pwm_write(EM_PWM_IDX pwm_idex, EM_PWM_NODE_CMD pwm_cmd, int write_value, cha
 	char sys_pwm_path[100];
 	char sys_cmd[100];
 	int rc;
+	FILE *fp;
 
 	if (write_value > PWM_MAX_UNIT)
 		write_value = PWM_MAX_UNIT;
 	else if (write_value < 0)
 		write_value = 0;
 
-	rc = sprintf(sys_pwm_path , "%s%s%d%s", SYS_PWM_PATH, prefix, pwm_idex, g_pwm_cmd_map_sys_tab[pwm_cmd]);
-	sprintf(sys_cmd, "echo %d > %s", write_value, sys_pwm_path);
-	system(sys_cmd);
+	rc = sprintf(sys_pwm_path, "%s%s%d%s", SYS_PWM_PATH, prefix, pwm_idex, g_pwm_cmd_map_sys_tab[pwm_cmd]);
+	fp = fopen(sys_pwm_path,"w");
+	if(fp == NULL) {
+		fprintf(stderr,"Error:[%s] opening:[%s]\n",strerror(errno),sys_pwm_path);
+		return ;
+	}
+	fprintf(fp , "%d", write_value);
+	fclose(fp);
 }
 
 static int
@@ -109,7 +115,7 @@ sys_pwm_read(EM_PWM_IDX pwm_idex, EM_PWM_NODE_CMD pwm_cmd, char*prefix)
 	char buf[100] = {0};
 	int ret_len;
 
-	sprintf(sys_pwm_path , "%s%s%d%s", SYS_PWM_PATH, prefix, pwm_idex, g_pwm_cmd_map_sys_tab[pwm_cmd]);
+	sprintf(sys_pwm_path, "%s%s%d%s", SYS_PWM_PATH, prefix, pwm_idex, g_pwm_cmd_map_sys_tab[pwm_cmd]);
 
 	fp = fopen(sys_pwm_path,"r");
 	if(fp == NULL) {
@@ -153,21 +159,21 @@ pwm_fan_function_router(sd_bus_message *msg, void *user_data,
 	/* Route the user action to appropriate handlers. */
 	if(strcmp(fan_function, "getValue_Fan") == 0) {
 		if (strncmp(fan_name, "fan_tacho", strlen("fan_tacho")) == 0) {
-			int fan_index = get_fan_index(fan_name, FAN_TACH_DBUS_OBJ_FORMAT);
+			int fan_index = 0;
+			rc = sd_bus_message_read(msg, "i", &fan_index);
 			int tach_reading =  sys_pwm_read(fan_index, EM_TACH_CMD_RPM, "tacho");
 			return sd_bus_reply_method_return(msg, "i", tach_reading);
 		} else {
-			int fan_index = get_fan_index(fan_name, FAN_DBUS_OBJ_FORMAT);
-			int pwm_idex = g_fan_map_pwm_tab[fan_index];
+			int pwm_idex;
+			rc = sd_bus_message_read(msg, "i", &pwm_idex);
 			int pwm_reading =  sys_pwm_read(pwm_idex, EM_PWM_CMD_FALLING, "pwm");
 			return sd_bus_reply_method_return(msg, "i", pwm_reading);
 		}
 	} else if(strcmp(fan_function, "setValue_Fan") == 0) {
 		int fan_speed = 0;
-		int fan_index = get_fan_index(fan_name, FAN_DBUS_OBJ_FORMAT);
-		int pwm_idex = g_fan_map_pwm_tab[fan_index];
+		int pwm_idex = 0;
 		/* Extract values into 'ss' ( string, string) */
-		rc = sd_bus_message_read(msg, "i", &fan_speed);
+		rc = sd_bus_message_read(msg, "ii", &pwm_idex,  &fan_speed);
 		sys_pwm_write(pwm_idex, EM_PWM_CMD_FALLING, fan_speed, "pwm");
 		sys_pwm_write(pwm_idex, EM_PWM_CMD_RISING, 0x00, "pwm");
 	} else {
@@ -184,12 +190,12 @@ pwm_fan_function_router(sd_bus_message *msg, void *user_data,
  */
 static const sd_bus_vtable fan_control_vtable[] = {
 	SD_BUS_VTABLE_START(0),
-	SD_BUS_METHOD("getValue_Fan", "", "i", &pwm_fan_function_router, SD_BUS_VTABLE_UNPRIVILEGED),
-	SD_BUS_METHOD("setValue_Fan", "i", "i", &pwm_fan_function_router, SD_BUS_VTABLE_UNPRIVILEGED),
+	SD_BUS_METHOD("getValue_Fan", "i", "i", &pwm_fan_function_router, SD_BUS_VTABLE_UNPRIVILEGED),
+	SD_BUS_METHOD("setValue_Fan", "ii", "i", &pwm_fan_function_router, SD_BUS_VTABLE_UNPRIVILEGED),
 	SD_BUS_VTABLE_END,
 };
 
-static int get_dbus_fan_parameters(sd_bus *bus , char *request_param , int *reponse_len, char reponse_data[50][200])
+static int get_dbus_fan_parameters(sd_bus *bus, char *request_param, int *reponse_len, char reponse_data[50][200], int *size_sensor_list, int *base_sensor_number)
 {
 	sd_bus_error bus_error = SD_BUS_ERROR_NULL;
 	sd_bus_message *response = NULL;
@@ -197,6 +203,8 @@ static int get_dbus_fan_parameters(sd_bus *bus , char *request_param , int *repo
 	const char*  response_param;
 
 	*reponse_len = 0; //clear reponse_len
+	*size_sensor_list = 0;
+	*base_sensor_number = -1;
 
 	rc = sd_bus_call_method(bus,
 				"org.openbmc.managers.System",
@@ -235,6 +243,14 @@ static int get_dbus_fan_parameters(sd_bus *bus , char *request_param , int *repo
 	}
 	sd_bus_error_free(&bus_error);
 	response = sd_bus_message_unref(response);
+
+	if (*reponse_len==4) {
+		if (strcmp(reponse_data[1], "SensorNumberList") == 0) {
+			*base_sensor_number = atof(reponse_data[2]);
+			*size_sensor_list = atoi(reponse_data[3]);
+		}
+	}
+
 	return rc;
 }
 
@@ -296,32 +312,27 @@ start_fan_services()
 	int reponse_len = 0;
 	char reponse_data[50][200];
 	int i;
-	int fan_index;
-	get_dbus_fan_parameters(bus_type, "FAN_INPUT_OBJ", &reponse_len, reponse_data);
+	int fan_index=0, map_pwm_index=0;
+	int base_sensor_number = 0;
+	int size_sensor_list = 0;
+	get_dbus_fan_parameters(bus_type, "FAN_INPUT_OBJ", &reponse_len, reponse_data, &size_sensor_list, &base_sensor_number);
+	if (size_sensor_list>0)
+		reponse_len = size_sensor_list;
 	for (i = 0; i<reponse_len; i++) {
-		if (i%2 == 0) {
-			//register_fan_services(bus_type, fan_slot, reponse_data[i]);
-			//Enable fan tach
-			char *fan_name = NULL;
-			fan_name = strrchr(reponse_data[i], '/');
-			if(fan_name) {
-				fan_name++;
-			} else
-				continue;
-
-			fan_index = get_fan_index(fan_name, FAN_TACH_DBUS_OBJ_FORMAT);
-			sys_pwm_write(fan_index, EM_FAN_CMD_EN, 1, "tacho");
-		} else {
-			int pwm_source;
-			sscanf(reponse_data[i], "pwm%d", &pwm_source);
-			sys_pwm_write(fan_index, EM_TACH_CMD_SOURCE, pwm_source, "tacho");
-
-		}
+		 map_pwm_index = (i%6) + 1;
+		 fan_index = i + 1;
+		//Enable fan tach
+		sys_pwm_write(fan_index, EM_TACH_CMD_SOURCE, map_pwm_index, "tacho");
+		sys_pwm_write(fan_index, EM_FAN_CMD_EN, 1, "tacho");
 	}
 
-	get_dbus_fan_parameters(bus_type, "FAN_OUTPUT_OBJ", &reponse_len, reponse_data);
-	for (i = 0; i<reponse_len; i++)
-		register_fan_services(bus_type, fan_slot, reponse_data[i]);
+	get_dbus_fan_parameters(bus_type, "FAN_OUTPUT_OBJ", &reponse_len, reponse_data, &size_sensor_list, &base_sensor_number);
+	if (size_sensor_list > 0) {
+		register_fan_services(bus_type, fan_slot, reponse_data[0]);
+	} else {
+		for (i = 0; i<reponse_len; i++)
+			register_fan_services(bus_type, fan_slot, reponse_data[i]);
+	}
 
 	/* If we had success in adding the providers, request for a bus name. */
 	if(rc >= 0) {
