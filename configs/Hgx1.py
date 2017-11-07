@@ -252,6 +252,12 @@ APPS = {
 		'monitor_process' : False,
 		'process_name'    : 'node_init_sthelens.exe',
 	},
+	'pex_service' : {
+                'system_state'    : 'BMC_READY',
+                'start_process'   : True,
+                'monitor_process' : True,
+                'process_name'    : 'pex_core.exe',
+	},
 }
 
 CACHED_INTERFACES = {
@@ -1292,6 +1298,126 @@ SENSOR_MONITOR_CONFIG = [
 								'sensor_name' : 'PSU6 Power Output'
 							}
 	],
+	['/org/openbmc/sensors/pex/pex1', {
+								'object_path':'sensors/pex/pex1',
+								'device_node' : '/tmp/pex/pex1_temp',
+								'poll_interval' : 10000,
+								'scale' : 1,
+								'units' : ''
+							}
+	],
+	['/org/openbmc/sensors/pex/pex2', {
+								'object_path':'sensors/pex/pex2',
+								'device_node' : '/tmp/pex/pex2_temp',
+								'poll_interval' : 10000,
+								'scale' : 1,
+								'units' : ''
+							}
+	],
+	['/org/openbmc/sensors/pex/pex3', {
+								'object_path':'sensors/pex/pex3',
+								'device_node' : '/tmp/pex/pex3_temp',
+								'poll_interval' : 10000,
+								'scale' : 1,
+								'units' : ''
+							}
+	],
+	['/org/openbmc/sensors/pex/pex4', {
+								'object_path':'sensors/pex/pex4',
+								'device_node' : '/tmp/pex/pex4_temp',
+								'poll_interval' : 10000,
+								'scale' : 1,
+								'units' : ''
+							}
+	],
+	['/org/openbmc/sensors/gpu/gpu1_mem_temp', { 
+							'object_path' : '/tmp/gpu/gpu1_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU1 Mem Temp'
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu2_mem_temp', {
+							'object_path' : '/tmp/gpu/gpu2_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU2 Mem Temp'
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu3_mem_temp', { 
+							'object_path' : '/tmp/gpu/gpu3_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU3 Mem Temp'
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu4_mem_temp', { 
+							'object_path' : '/tmp/gpu/gpu4_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower': '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU4 Mem Temp'
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu5_mem_temp', {
+							'object_path' : '/tmp/gpu/gpu5_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU5 Mem Temp'
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu6_mem_temp', {
+							'object_path' : '/tmp/gpu/gpu6_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU6 Mem Temp',
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu7_mem_temp', { 
+							'object_path' : '/tmp/gpu/gpu7_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower': '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU7 Mem Temp',
+						}
+	],
+	['/org/openbmc/sensors/gpu/gpu8_mem_temp', { 
+							'object_path' : '/tmp/gpu/gpu8_mem_temp',
+							'poll_interval' : 5000,
+							'scale' : 1,
+							'units' : 'C',
+							'critical_upper' : 85,
+							'critical_lower' : '',
+							'reading_type' : '0x01',
+							'sensor_name' : 'GPU8 Mem Temp'
+						}
+	],
 ]
 
 HWMON_CONFIG = {
@@ -1466,7 +1592,8 @@ FAN_ALGORITHM_CONFIG = {
         'FAN_OUTPUT_OBJ' : ['org.openbmc', 'org.openbmc.Fan'],
         'OPEN_LOOP_GROUPS_1' : ['org.openbmc.Sensors', 'org.openbmc.SensorValue'],
         'CLOSE_LOOP_GROUPS_1' : ['org.openbmc.Sensors', 'org.openbmc.SensorValue'],
-        'CLOSE_LOOP_GROUPS_2' : [],
+        'CLOSE_LOOP_GROUPS_2' : ['org.openbmc.Sensors', 'org.openbmc.SensorValue'],
+	'CLOSE_LOOP_GROUPS_3' : ['org.openbmc.Sensors', 'org.openbmc.SensorValue'],
     },
 
     'CHASSIS_POWER_STATE': ['/org/openbmc/control/chassis0'],
@@ -1513,10 +1640,10 @@ FAN_ALGORITHM_CONFIG = {
             #'100',
             '0',
             '1',
-            '-5',
-            '25',
+            '0',
+            '30',
             '38',
-            '20',
+            '30',
             '100',
         ],
     'OPEN_LOOP_GROUPS_1':
@@ -1558,6 +1685,40 @@ FAN_ALGORITHM_CONFIG = {
             "/tmp/gpu/gpu%d_temp",
             "SensorNumberList", #notfity following setting about SensorNumberList
             "0x41", #base sensor number
+            "8", #releate sensor list size
+        ],
+    'CLOSE_LOOP_PARAM_2' :
+        [
+            '0.35',
+            '-0.015',
+            '0.4',
+            '90',
+            '111',
+        ],
+    'CLOSE_LOOP_GROUPS_2':
+        [
+            #"/org/openbmc/sensors/pex/pex0",
+            #"/org/openbmc/sensors/pex/pex1",
+            #"/org/openbmc/sensors/pex/pex2",
+            #"/org/openbmc/sensors/pex/pex3",
+            "/tmp/pex/pex%d_temp",
+            "SensorNumberList", #notfity following setting about SensorNumberList
+            "0x37", #base sensor number
+            "4", #releate sensor list size
+        ],
+    'CLOSE_LOOP_PARAM_3' :
+        [
+            '0.7',
+            '-0.03',
+            '0.4',
+            '75',
+            '85',
+        ],
+    'CLOSE_LOOP_GROUPS_3':
+        [
+            "/tmp/gpu/gpu%d_mem_temp",
+            "SensorNumberList", #notfity following setting about SensorNumberList
+            "0x62", #base sensor number
             "8", #releate sensor list size
         ],
 

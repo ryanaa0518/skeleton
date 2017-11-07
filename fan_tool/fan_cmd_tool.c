@@ -75,8 +75,7 @@ void usage(const char *prog)
 	       "\t\t\t -d : Kd\n"
 	       "\t\t\t -t : target value\n"
 	       "\t\t\t -n : sample number (1~100)\n"
-	       //"\t\t\t -e : select closeloop index(0:GPU;1:PXE9797)\n"
-	       "\t\t\t -e : select closeloop index(0:GPU)\n"
+	       "\t\t\t -e : select closeloop index(0:GPU;1:PEX9797)\n"
 	       "\t\t openloop parameters setting:\n"
 	       "\t\t\t -a : ParamA\n"
 	       "\t\t\t -b : ParamB\n"
@@ -94,13 +93,12 @@ void usage(const char *prog)
 	       "\n\t-r 'read fan parameters':\n"
 	       "\n\tfor example:\n"
 	       "\t\t %s  -w -e 0 -p 0.45 -i -0.017 -d 0.3 -t 70 -n 20 ==> set closeloop index:0 , GPU\n"
-	       //"\t\t %s  -w -e 1 -p 0.45 -i -0.017 -d 0.3 -t 90 -n 20 ==> set closeloop index:1 , PXE9797\n"
+	       "\t\t %s  -w -e 1 -p 0.45 -i -0.017 -d 0.3 -t 90 -n 20 ==> set closeloop index:1 , PEX9797\n"
 	       "\t\t %s  -w -a 0 -b 2 -c 0 -l 20 -u 38\n"
 	       "\t\t %s  -w -s 255 -m 0 \n"
 	       "\t\t %s  -w -g 1 \n"
 	       "\t\t %s  -r\n"
-	       //, prog,prog, prog,prog,prog
-	       , prog,prog, prog,prog
+	       , prog,prog, prog,prog,prog
 	      );
 }
 
@@ -204,7 +202,8 @@ void show_fan_tacho_rpm(void)
 	}	
 }
 
-int main(int argc, char * const argv[])
+int
+main(int argc, char * const argv[])
 {
 	key_t key = ftok(FAN_SHM_PATH, FAN_SHM_KEY);
 	char *shm;
