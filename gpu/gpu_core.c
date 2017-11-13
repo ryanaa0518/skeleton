@@ -111,6 +111,7 @@ static int internal_gpu_access(int bus, __u8 slave,__u8 *write_buf, __u8 *read_b
 		fprintf(stderr, "Failed to open i2c device %s", filename);
 		return rc;
 	}
+
 	rc = ioctl(fd,I2C_SLAVE,slave);
 	if(rc < 0) {
 		fprintf(stderr, "Failed to do iotcl I2C_SLAVE\n");
@@ -325,16 +326,17 @@ void gpu_data_scan()
 {
 	/* init the global data */
 	memset(G_gpu_data, 0x0, sizeof(G_gpu_data));
-	int i =0;
+	int i = 0, rc = -1;
 	struct stat st = {0};
 	char gpu_path[128];
 	FILE *fp;
+
 	/* create the file patch for dbus usage*/
 	/* check if directory is existed */
 	if (stat(GPU_TEMP_PATH, &st) == -1) {
 		mkdir(GPU_TEMP_PATH, 0777);
 	}
-	for(i=0; i<MAX_GPU_NUM; i++) {
+	for(i = 0; i<MAX_GPU_NUM; i++) {
 		sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", i+1,"_temp");
 		if( access( gpu_path, F_OK ) != -1 ) {
 			fprintf(stderr,"Error:[%s] opening:[%s] , existed \n",gpu_path);
@@ -349,6 +351,61 @@ void gpu_data_scan()
 			fclose(fp);
 		}
 	}
+	while(rc < 0) {
+		int fd1, slave;
+		char filename[MAX_I2C_DEV_LEN] = {0};
+		unsigned char temp_writebuf[4] = {NV_CMD_GET_TEMP,0x0,0x0,0x80};
+		int count = 0, bus_no = 0;
+
+		for (count = 0; count < MAX_GPU_NUM; count ++) {
+			bus_no = gpu_device_bus[0].bus_no + count;		// gpu i2c port0
+			sprintf(filename, "/dev/i2c-%d", bus_no);
+
+			fd1 = open(filename,O_RDWR);
+
+			slave = 0x4f;
+			rc = -1;
+			rc = ioctl(fd1, I2C_SLAVE, slave);
+
+			if (rc < 0) {
+				fprintf(stderr, "Failed to do iotcl I2C_SLAVE\n");
+			}
+			if (i2c_smbus_write_block_data(fd1, MBT_REG_CMD, 4, temp_writebuf) < 0) {
+				rc = -2;
+			}
+			if (rc >= 0){
+				for (i = 0; i < MAX_GPU_NUM; i ++) {
+					gpu_device_bus[i].slave = 0x4f;
+					printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
+				}
+				close(fd1);
+				break;
+			}
+			
+			usleep (1000);
+			slave = 0x4d;
+			rc = -1;
+			rc = ioctl(fd1, I2C_SLAVE, slave);
+
+			if (rc < 0) {
+				fprintf(stderr, "Failed to do iotcl I2C_SLAVE\n");
+			}
+			if (i2c_smbus_write_block_data(fd1, MBT_REG_CMD, 4, temp_writebuf) < 0) {
+				rc = -2;
+			}
+			if (rc >= 0){
+				for (i = 0; i < MAX_GPU_NUM; i ++) {
+					gpu_device_bus[i].slave = 0x4d;
+					printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
+				}
+				close(fd1);
+				break;
+			}
+			close(fd1);
+			usleep (100 * 1000);
+		}
+	}
+	printf ("[DEBUGMSG] finish detect \n");					// debug	
 	while(1) {
 		for(i=0; i<MAX_GPU_NUM; i++) {
 			function_get_gpu_data(i);
