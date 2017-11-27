@@ -9,7 +9,8 @@ import dbus.service
 import dbus.mainloop.glib
 import re
 from obmc.dbuslib.bindings import get_dbus
-
+from obmc.events import Event
+from obmc.events import EventManager
 from obmc.sensors import SensorValue as SensorValue
 from obmc.sensors import HwmonSensor as HwmonSensor
 from obmc.sensors import SensorThresholds as SensorThresholds
@@ -45,7 +46,8 @@ class Hwmons():
 		self.hwmon_root = { }
 		self.threshold_state = {}
 		self.scanDirectory()
-		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)   
+		self.event_manager = EventManager()
+		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
 
 	def readAttribute(self,filename):
 		val = "N/A"
@@ -61,10 +63,17 @@ class Hwmons():
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
-
 	def poll(self,objpath,attribute):
 		try:
-			raw_value = int(self.readAttribute(attribute))
+			if attribute != '':
+				try:
+					raw_value = int(self.readAttribute(attribute))
+				except:
+					raw_value = "N/A"
+			else:
+				raw_value = "N/A"
+			if raw_value == "N/A":
+				return False
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
 			rtn = intf.setByPoll(raw_value)
@@ -73,28 +82,25 @@ class Hwmons():
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
+				origin_threshold_type = self.threshold_state[objpath]
+				self.threshold_state[objpath]  = threshold_state
 				if threshold_state == 'NORMAL':
-					threshold_type = self.threshold_state[objpath]
 					event_dir = 'Deasserted'
 				else:
-					threshold_type = threshold_state
 					event_dir = 'Asserted'
-					
+
+				self.threshold_state[objpath]  = threshold_state
 				scale = intf_p.Get(HwmonSensor.IFACE_NAME, 'scale')
 				real_reading = raw_value / scale
-				self.LogThresholdEventMessages(objpath, threshold_state, event_dir, real_reading)
-				self.threshold_state[objpath]  = threshold_state
+				self.LogThresholdEventMessages(objpath, threshold_state, origin_threshold_type, event_dir, real_reading)
 		except:
 			print "HWMON: Attibute no longer exists: "+attribute
 			self.sensors.pop(objpath,None)
 			return False
-
-
 		return True
 
+	def LogThresholdEventMessages(self, objpath, threshold_type, origin_threshold_type, event_dir, reading):
 
-	def LogThresholdEventMessages(self, objpath, threshold_type, event_dir, reading):
-	
 		obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 		sensortype = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_type')
@@ -105,28 +111,25 @@ class Hwmons():
 		#Get event messages
 		if threshold_type == 'UPPER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
-			desc = sensor_name+' '+threshold_type_str+' going high-'+event_dir+" | Reading "+str(reading)+", Threshold "+str(threshold)
-		else:
+			desc = sensor_name+' '+threshold_type_str+' going high-'+event_dir+": Reading "+str(reading)+", Threshold: "+str(threshold)
+		elif threshold_type == 'LOWER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_lower')
-			desc = sensor_name+' '+threshold_type_str+' going low-'+event_dir+":Reading "+str(reading)+", Threshold "+str(threshold)
-
-		#Get Severity
-		if event_dir == 'Asserted':
-			sev = "Critical"
+			desc = sensor_name+' '+threshold_type_str+' going low-'+event_dir+": Reading "+str(reading)+", Threshold: "+str(threshold)
 		else:
-			sev = "Information"
+			threshold = 'N/A'
+			if origin_threshold_type == 'UPPER_CRITICAL':
+				threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
+			if origin_threshold_type == 'LOWER_CRITICAL':
+				threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_lower')
+			desc = sensor_name+' '+threshold_type_str+' '+event_dir+" from "+str(origin_threshold_type)+": Reading "+str(reading)+", Threshold: "+str(threshold)
 
-		details = ""
-		debug = dbus.ByteArray("")
-
-		event_obj = bus.get_object("org.openbmc.records.events",
-									"/org/openbmc/records/events",
-									introspect=False)
-		event_intf = dbus.Interface(event_obj, "org.openbmc.recordlog")
-		event_intf.acceptBMCMessage(sev, desc, str(sensortype), str(sensor_number), details, debug)
+		# Add event log
+		severity = Event.SEVERITY_ERR if event_dir == 'Asserted' else Event.SEVERITY_INFO
+		log = Event(severity, desc, sensortype, sensor_number)
+		self.event_manager.add_log(log)
 
 		return True
-	
+
 	def addObject(self,dpath,hwmon_path,hwmon):
 		objsuf = hwmon['object_path']
 		objpath = SENSOR_PATH+'/'+objsuf
@@ -143,6 +146,8 @@ class Hwmons():
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 			intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+			# init value as N/A
+			intf.Set(SensorValue.IFACE_NAME,'value','N/A')
 			
 			## check if one of thresholds is defined to know
 			## whether to enable thresholds or not
@@ -168,7 +173,7 @@ class Hwmons():
 			objpath = System.SENSOR_MONITOR_CONFIG[i][0]
 			hwmon = System.SENSOR_MONITOR_CONFIG[i][1]
 
-			if 'object_path' not in hwmon or len(hwmon['object_path'])==0:
+			if 'object_path' not in hwmon:
 				print "Warnning[addSensorMonitorObject]: Not correct set [object_path]"
 				continue
 
@@ -183,6 +188,11 @@ class Hwmons():
 				obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 				intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
 				intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+				# init value as N/A
+				val = 'N/A'
+				if hwmon.has_key('value'):
+					val = hwmon['value']
+				intf.Set(SensorValue.IFACE_NAME,'value', val)
 
 				## check if one of thresholds is defined to know
 				## whether to enable thresholds or not
@@ -195,7 +205,8 @@ class Hwmons():
 
 				self.sensors[objpath]=True
 				self.threshold_state[objpath] = "NORMAL"
-				gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
+				if hwmon.has_key('poll_interval'):
+					gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
 	
 	def scanDirectory(self):
 	 	devices = os.listdir(HWMON_PATH)
