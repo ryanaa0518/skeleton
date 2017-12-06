@@ -20,6 +20,7 @@ SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
 DIR_POLL_INTERVAL = 30000
 HWMON_PATH = '/sys/class/hwmon'
+record_pgood = 0
 
 ## static define which interface each property is under
 ## need a better way that is not slow
@@ -46,6 +47,9 @@ class Hwmons():
 		self.hwmon_root = { }
 		self.threshold_state = {}
 		self.scanDirectory()
+		self.pgood_obj = bus.get_object('org.openbmc.control.Power', '/org/openbmc/control/power0', introspect=False)
+		self.pgood_intf = dbus.Interface(self.pgood_obj,dbus.PROPERTIES_IFACE)
+		self.record_pgood = 0
 		self.event_manager = EventManager()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
 
@@ -63,6 +67,25 @@ class Hwmons():
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
+	def check_system_event (self, current_pgood):
+		try:
+			system_event_objpath = "/org/openbmc/sensors/system_event"
+			if self.record_pgood != current_pgood:
+				if current_pgood == 1: #current poweroff->poweron condition
+					desc = "System Event"+' '+"Asserted"+' '+"System PowerOn"
+					log = Event(Event.SEVERITY_INFO, desc, 0x01, 0x01)
+					self.event_manager.add_log(log)
+					print"[DEBUGMSG] ~~~~~~FINISH~~~~~~ POWER ON"
+				elif current_pgood == 0: #current poweron->poweroff condition
+					desc = "System Event"+' '+"Asserted"+' '+"System PowerOff"
+					log = Event(Event.SEVERITY_INFO, desc, 0x01, 0x01)
+					self.event_manager.add_log(log)
+					print"[DEBUGMSG] ~~~~~~FINISH~~~~~~ POWER OFF"
+				self.record_pgood = current_pgood
+
+		except:
+			print" system_event : fail"
+			
 	def poll(self,objpath,attribute):
 		try:
 			if attribute != '':
@@ -80,6 +103,8 @@ class Hwmons():
 			if (rtn[0] == True):
 				self.writeAttribute(attribute,rtn[1])
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
+			self.check_system_event(current_pgood)
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
@@ -88,19 +113,19 @@ class Hwmons():
 					event_dir = 'Deasserted'
 				else:
 					event_dir = 'Asserted'
-
+			
 				self.threshold_state[objpath]  = threshold_state
 				scale = intf_p.Get(HwmonSensor.IFACE_NAME, 'scale')
 				real_reading = raw_value / scale
 				self.LogThresholdEventMessages(objpath, threshold_state, origin_threshold_type, event_dir, real_reading)
-		except:
+
+		except:     
 			print "HWMON: Attibute no longer exists: "+attribute
 			self.sensors.pop(objpath,None)
 			return False
 		return True
 
 	def LogThresholdEventMessages(self, objpath, threshold_type, origin_threshold_type, event_dir, reading):
-
 		obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 		sensortype = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_type')
@@ -127,7 +152,7 @@ class Hwmons():
 		severity = Event.SEVERITY_ERR if event_dir == 'Asserted' else Event.SEVERITY_INFO
 		log = Event(severity, desc, sensortype, sensor_number)
 		self.event_manager.add_log(log)
-
+		print"[DEBUGMSG] ~~~FINISH~~~", sensor_name
 		return True
 
 	def addObject(self,dpath,hwmon_path,hwmon):
