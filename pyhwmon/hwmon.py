@@ -20,7 +20,6 @@ SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
 DIR_POLL_INTERVAL = 30000
 HWMON_PATH = '/sys/class/hwmon'
-record_pgood = 0
 
 ## static define which interface each property is under
 ## need a better way that is not slow
@@ -105,6 +104,19 @@ class Hwmons():
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 			self.check_system_event(current_pgood)
+			
+			if current_pgood == 0 :
+				print "[DEBUGMSG] in power_good == 0"
+				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+				sensor_name_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
+				print "[DEBUGMSG] sensor_name_temp = ", sensor_name_temp
+				if sensor_name_temp >= "0x11" and sensor_name_temp <= "0x1C" :
+					print "[DEBUGMSG] PGOOD = 0 , return ", sensor_name_temp
+					return True
+			
+			print "[DEBUGMSG] ==================leave=================="
+			
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
@@ -117,6 +129,7 @@ class Hwmons():
 				self.threshold_state[objpath]  = threshold_state
 				scale = intf_p.Get(HwmonSensor.IFACE_NAME, 'scale')
 				real_reading = raw_value / scale
+				print "[DEBUGMSG]  current_pgood = ", current_pgood
 				self.LogThresholdEventMessages(objpath, threshold_state, origin_threshold_type, event_dir, real_reading)
 
 		except:     
@@ -132,7 +145,7 @@ class Hwmons():
 		sensor_number = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
 		sensor_name = objpath.split('/').pop()
 		threshold_type_str = threshold_type.title().replace('_', ' ')
-
+				
 		#Get event messages
 		if threshold_type == 'UPPER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
