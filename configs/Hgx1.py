@@ -872,7 +872,7 @@ SENSOR_MONITOR_CONFIG = [
 								'sensor_name' : 'PSU6 Temp 2'
 							}
 	],
-	['/org/openbmc/sensors/pex/pex1', {
+	['/org/openbmc/sensors/pex/pex1_temp', {
 								'object_path':'/tmp/pex/pex1_temp',
 								'poll_interval' : 10000,
 								'scale' : 1,
@@ -884,7 +884,7 @@ SENSOR_MONITOR_CONFIG = [
 								'sensor_name' : 'PEX1 Temp'
 							}
 	],
-	['/org/openbmc/sensors/pex/pex2', {
+	['/org/openbmc/sensors/pex/pex2_temp', {
 								'object_path':'/tmp/pex/pex2_temp',
 								'poll_interval' : 10000,
 								'scale' : 1,
@@ -896,7 +896,7 @@ SENSOR_MONITOR_CONFIG = [
 								'sensor_name' : 'PEX2 Temp'
 							}
 	],
-	['/org/openbmc/sensors/pex/pex3', {
+	['/org/openbmc/sensors/pex/pex3_temp', {
 								'object_path':'/tmp/pex/pex3_temp',
 								'poll_interval' : 10000,
 								'scale' : 1,
@@ -908,7 +908,7 @@ SENSOR_MONITOR_CONFIG = [
 								'sensor_name' : 'PEX3 Temp'
 							}
 	],
-	['/org/openbmc/sensors/pex/pex4', {
+	['/org/openbmc/sensors/pex/pex4_temp', {
 								'object_path':'/tmp/pex/pex4_temp',
 								'poll_interval' : 10000,
 								'scale' : 1,
