@@ -376,7 +376,7 @@ void gpu_data_scan()
 			if (rc >= 0){
 				for (i = 0; i < MAX_GPU_NUM; i ++) {
 					gpu_device_bus[i].slave = 0x4f;
-					printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
+					//printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
 				}
 				close(fd1);
 				break;
@@ -396,7 +396,7 @@ void gpu_data_scan()
 			if (rc >= 0){
 				for (i = 0; i < MAX_GPU_NUM; i ++) {
 					gpu_device_bus[i].slave = 0x4d;
-					printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
+					//printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
 				}
 				close(fd1);
 				break;
@@ -405,7 +405,7 @@ void gpu_data_scan()
 			usleep (100 * 1000);
 		}
 	}
-	printf ("[DEBUGMSG] finish detect \n");					// debug	
+	//printf ("[DEBUGMSG] finish detect \n");					// debug	
 	while(1) {
 		for(i=0; i<MAX_GPU_NUM; i++) {
 			function_get_gpu_data(i);

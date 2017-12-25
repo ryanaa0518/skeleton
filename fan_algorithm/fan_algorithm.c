@@ -487,8 +487,11 @@ static int get_max_sensor_reading_file(struct st_fan_obj_path_info *fan_obj, int
 
 	for(i=0; i<fan_obj->size; i++) {
 		rc = get_sensor_reading_file(fan_obj->path[i], &sensor_reading, fan_obj, i);
-		printf("[DEBUGMSG] i:%d, rc:%d, sensor_reading:%d\n", i, rc, sensor_reading);
-		printf("[DEBUGMSG] fan_obj->path[i]:%s\n", fan_obj->path[i]);
+		if (g_fan_para_shm->debug_msg_info_en == 1)
+		{
+			printf("[DEBUGMSG] i:%d, rc:%d, sensor_reading:%d\n", i, rc, sensor_reading);
+			printf("[DEBUGMSG] fan_obj->path[i]:%s\n", fan_obj->path[i]);
+		}
 		if (rc >= 0) {
 			if (sensor_reading <=0)
 				flag = -1;
@@ -681,8 +684,8 @@ static int fan_control_algorithm_monitor(void)
 					//if (t_closeloop_data->sensor_reading == 0)
 					//	t_closeloop_data->sensor_reading = 30;
 					check_change_closeloop_params(t_closeloop_data);
-					//if (g_fan_para_shm->debug_msg_info_en == 1)
-					//{
+					if (g_fan_para_shm->debug_msg_info_en == 1)
+					{
 						switch(closeloop_index)
 						{
 							case 0:
@@ -703,10 +706,10 @@ static int fan_control_algorithm_monitor(void)
 							default:
 								break;
 						}
-					//}
+					}
 					calculate_closeloop(t_closeloop_data, real_fanspeed);
 					closeloop_reading = (closeloop_reading>t_closeloop_data->sensor_reading)? t_closeloop_data->sensor_reading:closeloop_reading;
-					//if (g_fan_para_shm->debug_msg_info_en == 1)
+					if (g_fan_para_shm->debug_msg_info_en == 1)
 						printf("[FAN_ALGORITHM] ===========================================================================\n");
 				}
 				t_header = t_header->next;
@@ -791,7 +794,6 @@ static int fan_control_algorithm_monitor(void)
 			for(i=0, k = 0; k<g_FanInputObjPath.size; i++) {
 
 				rc = get_sensor_reading_file(g_FanInputObjPath.path[k], &Fan_tach, &g_FanInputObjPath, k);
-				printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d\n", i,  Fan_tach, rc); //[DEBUGMSG]
 				if (g_fan_para_shm->debug_msg_info_en == 1)
 					printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d, %s\n", i,  Fan_tach, rc, g_FanInputObjPath.path[k]);
 				if (rc < 0)

@@ -366,7 +366,7 @@ int function_get_pex_temp_data(int pex_idx)
 	rx_data = i2c_cmd->read_cmd.data;
 
 	if ((rx_data[0] & 0x80) != 0x80) {
-		printf("[DEBUGMSG][pex9797] rx_data[0]:%s\n", rx_data[0]);
+		//printf("[DEBUGMSG][pex9797] rx_data[0]:%s\n", rx_data[0]);
 		real_temp_data = -1;
 		goto error_i2c_access;
 	}
