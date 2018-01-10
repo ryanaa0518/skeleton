@@ -102,6 +102,11 @@ if __name__ == '__main__':
 	if (FRUS[f]['fru_type'] == "BMC"):
 		version = getVersion()
 		obj.update({'version': version})
+		##
+		eeprom_path = '/sys/devices/platform/ahb/ahb:apb/1e78a000.i2c/i2c-4/i2c-4/4-0050/eeprom'
+		if os.path.exists(eeprom_path):
+			if os.path.getsize(eeprom_path):
+				obj.update({'present': 'True'})
 
     name = dbus.service.BusName(DBUS_NAME,bus)
     print "Running Inventory Manager"
