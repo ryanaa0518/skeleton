@@ -72,14 +72,12 @@ class Hwmons():
 			if self.record_pgood != current_pgood:
 				if current_pgood == 1: #current poweroff->poweron condition
 					desc = "System Event"+' '+"Asserted"+' '+"System PowerOn"
-					log = Event(Event.SEVERITY_INFO, desc, 0x01, 0x01)
+					log = Event(Event.SEVERITY_INFO, desc)
 					self.event_manager.add_log(log)
-					print"[DEBUGMSG] ~~~~~~FINISH~~~~~~ POWER ON"
 				elif current_pgood == 0: #current poweron->poweroff condition
 					desc = "System Event"+' '+"Asserted"+' '+"System PowerOff"
-					log = Event(Event.SEVERITY_INFO, desc, 0x01, 0x01)
+					log = Event(Event.SEVERITY_INFO, desc)
 					self.event_manager.add_log(log)
-					print"[DEBUGMSG] ~~~~~~FINISH~~~~~~ POWER OFF"
 				self.record_pgood = current_pgood
 
 		except:
@@ -106,17 +104,12 @@ class Hwmons():
 			self.check_system_event(current_pgood)
 			
 			if current_pgood == 0 :
-				print "[DEBUGMSG] in power_good == 0"
 				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-				sensor_name_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
-				print "[DEBUGMSG] sensor_name_temp = ", sensor_name_temp
-				if sensor_name_temp >= "0x11" and sensor_name_temp <= "0x1C" :
-					print "[DEBUGMSG] PGOOD = 0 , return ", sensor_name_temp
+				sensornumber_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
+				if sensornumber_temp >= "0x11" and sensornumber_temp <= "0x1C" :
 					return True
-			
-			print "[DEBUGMSG] ==================leave=================="
-			
+						
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
@@ -129,7 +122,6 @@ class Hwmons():
 				self.threshold_state[objpath]  = threshold_state
 				scale = intf_p.Get(HwmonSensor.IFACE_NAME, 'scale')
 				real_reading = raw_value / scale
-				print "[DEBUGMSG]  current_pgood = ", current_pgood
 				self.LogThresholdEventMessages(objpath, threshold_state, origin_threshold_type, event_dir, real_reading)
 
 		except:     
@@ -141,12 +133,11 @@ class Hwmons():
 	def LogThresholdEventMessages(self, objpath, threshold_type, origin_threshold_type, event_dir, reading):
 		obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 		intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-		sensortype = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_type')
-		sensor_number = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
 		sensor_name = intf.Get(HwmonSensor.IFACE_NAME, 'sensor_name')
 		#sensor_name = objpath.split('/').pop()
 		threshold_type_str = threshold_type.title().replace('_', ' ')
-				
+
+		
 		#Get event messages
 		if threshold_type == 'UPPER_CRITICAL':
 			threshold = intf.Get(SensorThresholds.IFACE_NAME, 'critical_upper')
@@ -164,9 +155,8 @@ class Hwmons():
 
 		# Add event log
 		severity = Event.SEVERITY_ERR if event_dir == 'Asserted' else Event.SEVERITY_INFO
-		log = Event(severity, desc, sensortype, sensor_number)
+		log = Event(severity, desc)
 		self.event_manager.add_log(log)
-		print"[DEBUGMSG] ~~~FINISH~~~", sensor_name
 		return True
 
 	def addObject(self,dpath,hwmon_path,hwmon):
