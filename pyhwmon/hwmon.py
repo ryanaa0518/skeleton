@@ -20,6 +20,7 @@ SENSOR_BUS = 'org.openbmc.Sensors'
 SENSOR_PATH = '/org/openbmc/sensors'
 DIR_POLL_INTERVAL = 30000
 HWMON_PATH = '/sys/class/hwmon'
+PMBUS_FLAG = [0,0,0,0,0,0]
 
 ## static define which interface each property is under
 ## need a better way that is not slow
@@ -83,7 +84,19 @@ class Hwmons():
 
 		except:
 			print" system_event : fail"
-			
+
+	def check_pmbus_event(self,objpath,flag):
+		try:
+			pmbus_number = int(filter(str.isdigit,objpath.split('/')[5]))
+			#print "[DEBUGMSG] this is pmbus0%d" % pmbus_number
+			PMBUS_FLAG[pmbus_number-1] |= flag
+			if PMBUS_FLAG[pmbus_number-1] == 0x07:
+				desc = "PSU%d no longer exists" % pmbus_number
+				log = Event(Event.SEVERITY_ERR, desc)
+				self.event_manager.add_log(log)
+		except:
+			print" system_event : pmbus event fail"
+
 	def poll(self,objpath,attribute):
 		try:
 			if attribute != '':
@@ -94,6 +107,14 @@ class Hwmons():
 			else:
 				raw_value = "N/A"
 			if raw_value == "N/A":
+				#PSU status check
+				if 'power2_input' in attribute:
+					self.check_pmbus_event(objpath,0x01)
+				elif 'in2_input' in attribute:
+					self.check_pmbus_event(objpath,0x02)
+				elif 'temp2_input' in attribute:
+					self.check_pmbus_event(objpath,0x04)
+
 				return False
 
 			if raw_value == -1 :
