@@ -203,6 +203,12 @@ APPS = {
                 'monitor_process' : True,
                 'process_name'    : 'fan_algorithm.exe',
 	},
+	'obmc-ast-watchdog' : {
+		'system_state'    : 'BMC_READY',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'obmc-ast-watchdog.exe',
+	},
 	'bmc_control' : {
 		'system_state'    : 'BMC_STARTING',
 		'start_process'   : True,

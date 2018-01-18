@@ -34,7 +34,8 @@ SUBDIRS = hacks \
 	  pytools \
 	  fan_algorithm \
 	  info \
-	  node-init-sthelens
+	  node-init-sthelens \
+	  obmc-ast-watchdog
 
 
 REVERSE_SUBDIRS = $(shell echo $(SUBDIRS) $(GDBUS_APPS) $(SDBUS_APPS) | tr ' ' '\n' | tac |tr '\n' ' ')
