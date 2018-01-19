@@ -19,7 +19,7 @@ void pmbus_scan()
 
     char buff_path[256] = "";
     int i;
-    int file;
+    int file, file1;
     char filename[MAX_I2C_DEV_LEN] = {0};
     int bus;
     int rc = 0;
@@ -41,10 +41,15 @@ void pmbus_scan()
                     sprintf(buff_path, "echo pmbus 0x58 > /sys/bus/i2c/devices/i2c-%d/new_device", bus);
 					printf ("[DEBUGMSG] buff_path : %s\n", buff_path);
                     system(buff_path);
-					sleep(10);
-					sprintf(buff_path, "echo %d-0058 > /sys/bus/i2c/drivers/pmbus/bind", bus);
-					printf ("[DEBUGMSG] buff_path : %s\n", buff_path);
-                    system(buff_path);
+					sleep(1);
+					sprintf(filename,"/sys/bus/i2c/drivers/pmbus/%d-0058",bus);
+					file1 = open(filename,O_RDWR);
+					if (file1 != 0) {
+						sprintf(buff_path, "echo %d-0058 > /sys/bus/i2c/drivers/pmbus/bind", bus);
+						printf ("[DEBUGMSG] buff_path : %s\n", buff_path);
+						system(buff_path);
+					}
+					close(file1);
                 }
             }
             close(file);
