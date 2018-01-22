@@ -41,7 +41,6 @@ void pmbus_scan()
                     sprintf(buff_path, "echo pmbus 0x58 > /sys/bus/i2c/devices/i2c-%d/new_device", bus);
 					printf ("[DEBUGMSG] buff_path : %s\n", buff_path);
                     system(buff_path);
-					sleep(1);
 					sprintf(filename,"/sys/bus/i2c/drivers/pmbus/%d-0058",bus);
 					file1 = open(filename,O_RDWR);
 					if (file1 != 0) {
