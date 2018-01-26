@@ -323,7 +323,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x05',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'FIO Inlet 1 Temp'
+							'sensor_name' : 'FIO Inlet 1 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/temperature/TMP10', {
@@ -335,7 +336,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x06',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'FIO Inlet 2 Temp'
+							'sensor_name' : 'FIO Inlet 2 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu1_temp', { 
@@ -347,7 +349,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x41',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU1 Temp'
+							'sensor_name' : 'GPU1 Temp',
+							'reading_error_count' : 0
 						}
 	],	
 	['/org/openbmc/sensors/gpu/gpu2_temp', {
@@ -359,7 +362,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x42',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU2 Temp'
+							'sensor_name' : 'GPU2 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu3_temp', { 
@@ -371,7 +375,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x43',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU3 Temp'
+							'sensor_name' : 'GPU3 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu4_temp', { 
@@ -383,7 +388,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x44',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU4 Temp'
+							'sensor_name' : 'GPU4 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu5_temp', {
@@ -395,7 +401,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x45',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU5 Temp'
+							'sensor_name' : 'GPU5 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu6_temp', {
@@ -408,6 +415,7 @@ SENSOR_MONITOR_CONFIG = [
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU6 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu7_temp', { 
@@ -420,6 +428,7 @@ SENSOR_MONITOR_CONFIG = [
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU7 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu8_temp', { 
@@ -431,7 +440,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x48',
 							'sensor_type': '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU8 Temp'
+							'sensor_name' : 'GPU8 Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/control/fan/fan1', { 
@@ -443,7 +453,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x1D',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 1'
+							'sensor_name' : 'PWM 1',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/control/fan/fan2', {
@@ -455,7 +466,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0X1E',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 2'
+							'sensor_name' : 'PWM 2',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/control/fan/fan3', {
@@ -467,7 +479,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x1F',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name':'PWM 3'
+							'sensor_name':'PWM 3',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/control/fan/fan4', {
@@ -479,7 +492,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x20',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 4'
+							'sensor_name' : 'PWM 4',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/control/fan/fan5', {
@@ -491,7 +505,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x21',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 5'
+							'sensor_name' : 'PWM 5',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/control/fan/fan6', {
@@ -503,7 +518,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x22',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'PWM 6'
+							'sensor_name' : 'PWM 6',
+							'reading_error_count' : 'N/A'
 					}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho1', { 
@@ -515,7 +531,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x11',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 1'
+							'sensor_name' : 'Fan Tach 1',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho2', {
@@ -527,7 +544,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x12',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 2'
+							'sensor_name' : 'Fan Tach 2',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho3', {
@@ -539,7 +557,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x13',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 3'
+							'sensor_name' : 'Fan Tach 3',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho4', {
@@ -551,7 +570,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x14',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 4'
+							'sensor_name' : 'Fan Tach 4',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho5', {
@@ -563,7 +583,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x15',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 5'
+							'sensor_name' : 'Fan Tach 5',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho6', {
@@ -575,7 +596,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x16',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 6'
+							'sensor_name' : 'Fan Tach 6',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho7', {
@@ -587,7 +609,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x17',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 7'
+							'sensor_name' : 'Fan Tach 7',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho8', {
@@ -595,11 +618,12 @@ SENSOR_MONITOR_CONFIG = [
 							'poll_interval' : 10000,
 							'scale' : 1,
 							'units' : 'rpm',
-                            'critical_lower' : 3800,
+							'critical_lower' : 3800,
 							'sensornumber' : '0x18',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 8'
+							'sensor_name' : 'Fan Tach 8',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho9', {
@@ -611,7 +635,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x19',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 9'
+							'sensor_name' : 'Fan Tach 9',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho10', {
@@ -623,7 +648,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x1A',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 10'
+							'sensor_name' : 'Fan Tach 10',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho11', {
@@ -635,7 +661,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x1B',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 11'
+							'sensor_name' : 'Fan Tach 11',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/fan/fan_tacho12', {
@@ -647,7 +674,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x1C',
 							'sensor_type' : '0x04',
 							'reading_type' : '0x01',
-							'sensor_name' : 'Fan Tach 12'
+							'sensor_name' : 'Fan Tach 12',
+							'reading_error_count' : 'N/A'
 						}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Power_pout', {
@@ -659,7 +687,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x50',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Power Output'
+								'sensor_name' : 'PSU1 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/Voltage_vout', {
@@ -672,7 +701,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x51',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Voltage Output'
+								'sensor_name' : 'PSU1 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus01/temp_02', {
@@ -684,7 +714,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x52',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU1 Temp 2'
+								'sensor_name' : 'PSU1 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Power_pout', {
@@ -696,7 +727,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x53',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Power Output'
+								'sensor_name' : 'PSU2 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/Voltage_vout', {
@@ -709,7 +741,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x54',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Voltage Output'
+								'sensor_name' : 'PSU2 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus02/temp_02', {
@@ -721,7 +754,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x55',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU2 Temp 2'
+								'sensor_name' : 'PSU2 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Power_pout', {
@@ -733,7 +767,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x56',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Power Output'
+								'sensor_name' : 'PSU3 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/Voltage_vout', {
@@ -746,7 +781,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x57',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Voltage Output'
+								'sensor_name' : 'PSU3 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus03/temp_02', {
@@ -758,7 +794,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x58',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU3 Temp 2'
+								'sensor_name' : 'PSU3 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Power_pout', {
@@ -770,7 +807,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x59',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Power Output'
+								'sensor_name' : 'PSU4 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/Voltage_vout', {
@@ -783,7 +821,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5A',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Voltage Output'
+								'sensor_name' : 'PSU4 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus04/temp_02', {
@@ -795,7 +834,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5B',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU4 Temp 2'
+								'sensor_name' : 'PSU4 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Power_pout', {
@@ -807,7 +847,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5C',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Power Output'
+								'sensor_name' : 'PSU5 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/Voltage_vout', {
@@ -820,7 +861,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5D',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Voltage Output'
+								'sensor_name' : 'PSU5 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus05/temp_02', {
@@ -832,7 +874,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5E',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU5 Temp 2'
+								'sensor_name' : 'PSU5 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Power_pout', {
@@ -844,7 +887,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x5F',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Power Output'
+								'sensor_name' : 'PSU6 Power Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/Voltage_vout', {
@@ -857,7 +901,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x60',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Voltage Output'
+								'sensor_name' : 'PSU6 Voltage Output',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pmbus/pmbus06/temp_02', {
@@ -869,7 +914,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x61',
 								'sensor_type' : '0x09',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PSU6 Temp 2'
+								'sensor_name' : 'PSU6 Temp 2',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pex/pex1_temp', {
@@ -881,7 +927,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x37',
 								'sensor_type' : '0x01',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PEX1 Temp'
+								'sensor_name' : 'PEX1 Temp',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pex/pex2_temp', {
@@ -893,7 +940,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x38',
 								'sensor_type' : '0x01',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PEX2 Temp'
+								'sensor_name' : 'PEX2 Temp',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pex/pex3_temp', {
@@ -905,7 +953,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x39',
 								'sensor_type' : '0x01',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PEX3 Temp'
+								'sensor_name' : 'PEX3 Temp',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/pex/pex4_temp', {
@@ -917,7 +966,8 @@ SENSOR_MONITOR_CONFIG = [
 								'sensornumber' : '0x3A',
 								'sensor_type' : '0x01',
 								'reading_type' : '0x01',
-								'sensor_name' : 'PEX4 Temp'
+								'sensor_name' : 'PEX4 Temp',
+								'reading_error_count' : 'N/A'
 							}
 	],
 	['/org/openbmc/sensors/gpu/gpu1_mem_temp', { 
@@ -929,7 +979,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x62',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU1 Mem Temp'
+							'sensor_name' : 'GPU1 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu2_mem_temp', {
@@ -941,7 +992,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x63',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU2 Mem Temp'
+							'sensor_name' : 'GPU2 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu3_mem_temp', { 
@@ -953,7 +1005,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x64',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU3 Mem Temp'
+							'sensor_name' : 'GPU3 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu4_mem_temp', { 
@@ -965,7 +1018,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x65',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU4 Mem Temp'
+							'sensor_name' : 'GPU4 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu5_mem_temp', {
@@ -977,7 +1031,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x66',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU5 Mem Temp'
+							'sensor_name' : 'GPU5 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu6_mem_temp', {
@@ -990,6 +1045,7 @@ SENSOR_MONITOR_CONFIG = [
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU6 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu7_mem_temp', { 
@@ -1002,6 +1058,7 @@ SENSOR_MONITOR_CONFIG = [
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
 							'sensor_name' : 'GPU7 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 	['/org/openbmc/sensors/gpu/gpu8_mem_temp', { 
@@ -1013,7 +1070,8 @@ SENSOR_MONITOR_CONFIG = [
 							'sensornumber' : '0x69',
 							'sensor_type' : '0x01',
 							'reading_type' : '0x01',
-							'sensor_name' : 'GPU8 Mem Temp'
+							'sensor_name' : 'GPU8 Mem Temp',
+							'reading_error_count' : 0
 						}
 	],
 ]

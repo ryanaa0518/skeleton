@@ -38,6 +38,7 @@ IFACE_LOOKUP = {
 	'reading_type': HwmonSensor.IFACE_NAME,
 	'min_reading': HwmonSensor.IFACE_NAME,
 	'max_reading': HwmonSensor.IFACE_NAME,
+	'reading_error_count': HwmonSensor.IFACE_NAME,
 }
 
 class Hwmons():
@@ -94,6 +95,21 @@ class Hwmons():
 				raw_value = "N/A"
 			if raw_value == "N/A":
 				return False
+
+			if raw_value == -1 :
+				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+				reading_error_count = intf.Get(HwmonSensor.IFACE_NAME, 'reading_error_count')
+
+				if reading_error_count != "N/A":
+					reading_error_count +=1
+					intf.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+					if reading_error_count < 3:
+						return True
+
+					reading_error_count = 0
+					intf.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+
 			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
 			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
 			rtn = intf.setByPoll(raw_value)
@@ -109,7 +125,7 @@ class Hwmons():
 				sensornumber_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
 				if sensornumber_temp >= "0x11" and sensornumber_temp <= "0x1C" :
 					return True
-						
+
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
