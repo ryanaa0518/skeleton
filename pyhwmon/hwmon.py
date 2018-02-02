@@ -117,7 +117,7 @@ class Hwmons():
 
 				return False
 
-			if raw_value == -1 :
+			if raw_value == -1 or raw_value == 255:
 				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 				reading_error_count = intf.Get(HwmonSensor.IFACE_NAME, 'reading_error_count')
@@ -125,7 +125,7 @@ class Hwmons():
 				if reading_error_count != "N/A":
 					reading_error_count +=1
 					intf.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
-					if reading_error_count < 3:
+					if reading_error_count < 5:
 						return True
 
 					reading_error_count = 0
