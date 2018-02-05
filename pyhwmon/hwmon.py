@@ -128,9 +128,9 @@ class Hwmons():
 			
 			if current_pgood == 0 and standby_monitor == False:
 				raw_value = -1
-				#rtn = intf.setByPoll(raw_value)
-				#if (rtn[0] == True):
-				self.writeAttribute(attribute,raw_value)
+				rtn = intf.setByPoll(raw_value)
+				if (rtn[0] == True):
+					self.writeAttribute(attribute,raw_value)
 				return True
 
 
@@ -322,8 +322,8 @@ class Hwmons():
 					for attribute in hwmon['names'].keys():
 						self.addObject(dpath,dpath+attribute,hwmon['names'][attribute])
 						
-			else:
-				print "WARNING - hwmon: Unhandled hwmon: "+dpath
+			#else:
+				#print "WARNING - hwmon: Unhandled hwmon: "+dpath
 	
 		self.addSensorMonitorObject()
 		for k in self.hwmon_root.keys():
