@@ -40,6 +40,7 @@ IFACE_LOOKUP = {
 	'min_reading': HwmonSensor.IFACE_NAME,
 	'max_reading': HwmonSensor.IFACE_NAME,
 	'reading_error_count': HwmonSensor.IFACE_NAME,
+	'standby_monitor' : HwmonSensor.IFACE_NAME,
 }
 
 class Hwmons():
@@ -99,6 +100,10 @@ class Hwmons():
 
 	def poll(self,objpath,attribute):
 		try:
+			obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			
 			if attribute != '':
 				try:
 					raw_value = int(self.readAttribute(attribute))
@@ -106,6 +111,7 @@ class Hwmons():
 					raw_value = "N/A"
 			else:
 				raw_value = "N/A"
+
 			if raw_value == "N/A":
 				#PSU status check
 				if 'power2_input' in attribute:
@@ -117,35 +123,46 @@ class Hwmons():
 
 				return False
 
+			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
+			standby_monitor = intf_p.Get(HwmonSensor.IFACE_NAME, 'standby_monitor')
+			
+			if current_pgood == 0 and standby_monitor == False:
+				raw_value = -1
+				rtn = intf.setByPoll(raw_value)
+				if (rtn[0] == True):
+					self.writeAttribute(attribute,raw_value)
+				return True
+
+
 			if raw_value == -1 or raw_value == 255:
-				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
-				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-				reading_error_count = intf.Get(HwmonSensor.IFACE_NAME, 'reading_error_count')
+				#obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+				#intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+				reading_error_count = intf_p.Get(HwmonSensor.IFACE_NAME, 'reading_error_count')
 
 				if reading_error_count != "N/A":
 					reading_error_count +=1
-					intf.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
 					if reading_error_count < 5:
 						return True
 
 					reading_error_count = 0
-					intf.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
 
-			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			#obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
+			#intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
 			rtn = intf.setByPoll(raw_value)
 			if (rtn[0] == True):
 				self.writeAttribute(attribute,rtn[1])
-			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			#intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 			self.check_system_event(current_pgood)
 			
-			if current_pgood == 0 :
-				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
-				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-				sensornumber_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
-				if sensornumber_temp >= "0x11" and sensornumber_temp <= "0x1C" :
-					return True
+			if current_pgood == 0 and standby_monitor == False:
+				#obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+				#intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+				#sensornumber_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
+				#if sensornumber_temp >= "0x11" and sensornumber_temp <= "0x1C" :
+				return True
 
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
@@ -305,8 +322,8 @@ class Hwmons():
 					for attribute in hwmon['names'].keys():
 						self.addObject(dpath,dpath+attribute,hwmon['names'][attribute])
 						
-			else:
-				print "WARNING - hwmon: Unhandled hwmon: "+dpath
+			#else:
+				#print "WARNING - hwmon: Unhandled hwmon: "+dpath
 	
 		self.addSensorMonitorObject()
 		for k in self.hwmon_root.keys():
