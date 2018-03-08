@@ -259,10 +259,16 @@ APPS = {
 		'process_name'    : 'node_init_sthelens.exe',
 	},
 	'pex_service' : {
-                'system_state'    : 'BMC_READY',
-                'start_process'   : True,
-                'monitor_process' : True,
-                'process_name'    : 'pex_core.exe',
+		'system_state'    : 'BMC_READY',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'pex_core.exe',
+	},
+	'multi-user-check' : {
+		'system_state'    : 'BMC_READY',
+		'start_process'   : True,
+		'monitor_process' : False,
+		'process_name'    : 'multi-user-check.exe',
 	},
 }
 
