@@ -228,31 +228,46 @@ int function_get_gpu_data(int index)
 	/*get gpu temp data*/
 	rc = access_gpu_data(index, temp_writebuf, readbuf);
 	if(rc==0) {
-		int gpu_mem_temp = -1;
-		G_gpu_data[gpu_device_bus[index].device_index].temp_ready = 1;
-		G_gpu_data[gpu_device_bus[index].device_index].temp = readbuf[1];
-
-		rc = access_gpu_data(index, temp_mem_writebuf, readbuf);
-		sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", gpu_device_bus[index].device_index+1,"_mem_temp");
-		if (rc == 0) {
-			gpu_mem_temp =  readbuf[1];
-			sprintf(sys_cmd, "echo %d > %s", readbuf[1], gpu_path);
-			system(sys_cmd);
-			G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready =1;
+		if (readbuf[1] == 0xff) {
+			printf ("[DEBUGMSG] GPU[%d] solution \n", index+1 );
+			return 0;
 		}
-		else
-		{
-			if(G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready ==1) {
-				sprintf(sys_cmd, "echo %d > %s", rc , gpu_path);
-				system(sys_cmd);
+		G_gpu_data[gpu_device_bus[index].device_index].temp = readbuf[1];
+		if (gpu_device_bus[index].slave == 0x4d) {
+			int gpu_mem_temp = -1;
+			G_gpu_data[gpu_device_bus[index].device_index].temp_ready = 1;			
+			rc = access_gpu_data(index, temp_mem_writebuf, readbuf);
+			if (readbuf[1] == 0xff) {
+				printf ("[DEBUGMSG] GPU memory solution \n");
+				return 0;
 			}
-			G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready =0;
+			sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", gpu_device_bus[index].device_index+1,"_mem_temp");
+			if (rc == 0) {
+				gpu_mem_temp =  readbuf[1];
+				sprintf(sys_cmd, "echo %d > %s", readbuf[1], gpu_path);
+				system(sys_cmd);
+				G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready =1;
+			}
+			else
+			{
+				if(G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready ==1) {
+					sprintf(sys_cmd, "echo %d > %s", rc , gpu_path);
+					system(sys_cmd);
+				}
+				G_gpu_data[gpu_device_bus[index].device_index].temp_mem_ready =0;
+			}
+		}
+		else {
+			sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", gpu_device_bus[index].device_index+1,"_mem_temp");
+			sprintf(sys_cmd, "echo %d > %s", 0 , gpu_path);
+			system(sys_cmd);
 		}
 		/* write data to file */
 		sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", gpu_device_bus[index].device_index+1,"_temp");
 		sprintf(sys_cmd, "echo %d > %s", G_gpu_data[gpu_device_bus[index].device_index].temp, gpu_path);
 		system(sys_cmd);
-	} else {
+	} 
+	else {
 		if(G_gpu_data[gpu_device_bus[index].device_index].temp_ready) { /*if previous is ok*/
 			sprintf(gpu_path, "%s%s%d%s", GPU_TEMP_PATH, "/gpu", gpu_device_bus[index].device_index+1,"_temp");
 			sprintf(sys_cmd, "echo %d > %s", rc, gpu_path);
@@ -376,14 +391,13 @@ void gpu_data_scan()
 			if (rc >= 0){
 				for (i = 0; i < MAX_GPU_NUM; i ++) {
 					gpu_device_bus[i].slave = 0x4f;
-					//printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
 				}
 				close(fd1);
 				break;
 			}
 			
 			usleep (1000);
-			slave = 0x4d;
+			slave = 0x4d;					// with gpu memory temp
 			rc = -1;
 			rc = ioctl(fd1, I2C_SLAVE, slave);
 
@@ -396,7 +410,6 @@ void gpu_data_scan()
 			if (rc >= 0){
 				for (i = 0; i < MAX_GPU_NUM; i ++) {
 					gpu_device_bus[i].slave = 0x4d;
-					//printf ("[DEBUGMSG] gpu_device_bus[%d].slave:%x \n", i, gpu_device_bus[i].slave);	// debug
 				}
 				close(fd1);
 				break;
@@ -405,7 +418,6 @@ void gpu_data_scan()
 			usleep (100 * 1000);
 		}
 	}
-	//printf ("[DEBUGMSG] finish detect \n");					// debug	
 	while(1) {
 		for(i=0; i<MAX_GPU_NUM; i++) {
 			function_get_gpu_data(i);
@@ -434,5 +446,4 @@ main(void)
 	gpu_data_scan();
 	return 0;
 }
-
 

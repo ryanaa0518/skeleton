@@ -243,8 +243,7 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 	index = sensor_data->index;
 
 	sensor_data->sensor_reading = g_fan_para_shm->closeloop_param[index].closeloop_sensor_reading;
-
-	if (sensor_data->sensor_reading <=0) {
+	if (sensor_data->sensor_reading < 0) {
 		pwm_speed = 100;
 		g_closeloop_record[g_closeloop_record_count].cal_speed = 100;
 		g_closeloop_record[g_closeloop_record_count].current_error = 0;
@@ -300,9 +299,9 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 			closeloop_first_time +=1;
 		}
 	}
-
+	
 	pwm_speed = pid_value + (double) current_fanspeed;
-
+		
 	g_fan_para_shm->closeloop_param[index].pid_value = pid_value;
 	g_fan_para_shm->closeloop_param[index].closeloop_speed = pwm_speed;
 
@@ -333,7 +332,6 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 
 	if (sensor_data->sensor_reading>=sensor_data->warning_temp)
 		g_Closeloopspeed = 100;
-
 	return 1;
 }
 
@@ -464,7 +462,7 @@ static int get_sensor_reading_file(char *obj_path, int *sensor_reading, struct s
 	int i;
 	*sensor_reading = 0;
 	sprintf(file_path, obj_path, (idx+1));
-	for (i = 0; i<retry; i++) {
+	for (i = 0; i < retry; i++) {
 		rc = read_file(file_path);
 		if (rc > 0)
 			break;
@@ -482,18 +480,14 @@ static int get_max_sensor_reading_file(struct st_fan_obj_path_info *fan_obj, int
 	int i;
 	int rc;
 	int sensor_reading = 0;
-	int max_value = 0;
+	int max_value = 1;
 	int flag = 0;
-
+	
+	
 	for(i=0; i<fan_obj->size; i++) {
 		rc = get_sensor_reading_file(fan_obj->path[i], &sensor_reading, fan_obj, i);
-		if (g_fan_para_shm->debug_msg_info_en == 1)
-		{
-			printf("[DEBUGMSG] i:%d, rc:%d, sensor_reading:%d\n", i, rc, sensor_reading);
-			printf("[DEBUGMSG] fan_obj->path[i]:%s\n", fan_obj->path[i]);
-		}
 		if (rc >= 0) {
-			if (sensor_reading <=0)
+			if (sensor_reading < 0)
 				flag = -1;
 			if (index >=0) {
 				g_fan_para_shm->closeloop_param[index].groups_sensor_reading[i] =  sensor_reading;
@@ -502,6 +496,7 @@ static int get_max_sensor_reading_file(struct st_fan_obj_path_info *fan_obj, int
 		}
 	}
 
+	
 	return (flag == -1? -1 : max_value);
 }
 
@@ -684,8 +679,8 @@ static int fan_control_algorithm_monitor(void)
 					//if (t_closeloop_data->sensor_reading == 0)
 					//	t_closeloop_data->sensor_reading = 30;
 					check_change_closeloop_params(t_closeloop_data);
-					if (g_fan_para_shm->debug_msg_info_en == 1)
-					{
+					//if (g_fan_para_shm->debug_msg_info_en == 1)
+					//{
 						switch(closeloop_index)
 						{
 							case 0:
@@ -706,10 +701,10 @@ static int fan_control_algorithm_monitor(void)
 							default:
 								break;
 						}
-					}
+					//}
 					calculate_closeloop(t_closeloop_data, real_fanspeed);
-					closeloop_reading = (closeloop_reading>t_closeloop_data->sensor_reading)? t_closeloop_data->sensor_reading:closeloop_reading;
-					if (g_fan_para_shm->debug_msg_info_en == 1)
+					closeloop_reading = (closeloop_reading > t_closeloop_data->sensor_reading)? t_closeloop_data->sensor_reading:closeloop_reading;
+					//if (g_fan_para_shm->debug_msg_info_en == 1)
 						printf("[FAN_ALGORITHM] ===========================================================================\n");
 				}
 				t_header = t_header->next;
@@ -757,23 +752,21 @@ static int fan_control_algorithm_monitor(void)
 				openloop_reading = (openloop_reading<t_reading? t_reading:openloop_reading);
 				t_header = t_header->next;
 			}
-
 			if (closeloop_reading > 0 && openloop_reading > 0) {
 				if((double) g_Openloopspeed > g_Closeloopspeed) {
 					g_FanSpeed = (double)g_Openloopspeed;
-				} else {
+				} 
+				else {
 					g_FanSpeed = (double)g_Closeloopspeed;
 				}
-
 				if (first_time_set == 0 && g_Openloopspeed>0 && g_Closeloopspeed>0) {
 					if (g_Closeloopspeed == 100)
 						g_FanSpeed = (double)g_Openloopspeed;
 					first_time_set = 1;
 				}
 
-
 				real_fanspeed = g_FanSpeed;
-
+				
 				FinalFanSpeed =(int) ((double)g_FanSpeed * 255)/100;
 
 				if(g_FanSpeed > g_fanled_speed_limit) {
@@ -783,7 +776,8 @@ static int fan_control_algorithm_monitor(void)
 					fan_led_port0 = FAN_LED_PORT0_ALL_RED;
 					fan_led_port1 = FAN_LED_PORT1_ALL_RED;
 				}
-			} else {
+			} 
+			else {
 				FinalFanSpeed = 255;
 				real_fanspeed = 100;
 				fan_led_port0 = FAN_LED_PORT0_ALL_BLUE;
@@ -794,6 +788,7 @@ static int fan_control_algorithm_monitor(void)
 			for(i=0, k = 0; k<g_FanInputObjPath.size; i++) {
 
 				rc = get_sensor_reading_file(g_FanInputObjPath.path[k], &Fan_tach, &g_FanInputObjPath, k);
+				printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d\n", i,  Fan_tach, rc); //[DEBUGMSG]
 				if (g_fan_para_shm->debug_msg_info_en == 1)
 					printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d, %s\n", i,  Fan_tach, rc, g_FanInputObjPath.path[k]);
 				if (rc < 0)
@@ -819,7 +814,8 @@ static int fan_control_algorithm_monitor(void)
 				else
 					k+=2;
 			}
-		} else {
+		} 
+		else {
 			FinalFanSpeed = 255;
 			closeloop_first_time = 0;
 			first_time_set = 0;
@@ -827,7 +823,6 @@ static int fan_control_algorithm_monitor(void)
 			fan_led_port1 = FAN_LED_OFF;
 			real_fanspeed = 100;
 		}
-
 		set_fanled(fan_led_port0,fan_led_port1, 0);
 
 		if (g_fan_para_shm != NULL) {

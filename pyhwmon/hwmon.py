@@ -89,12 +89,12 @@ class Hwmons():
 	def check_pmbus_event(self,objpath,flag):
 		try:
 			pmbus_number = int(filter(str.isdigit,objpath.split('/')[5]))
-			#print "[DEBUGMSG] this is pmbus0%d" % pmbus_number
 			PMBUS_FLAG[pmbus_number-1] |= flag
 			if PMBUS_FLAG[pmbus_number-1] == 0x07:
 				desc = "PSU%d no longer exists" % pmbus_number
 				log = Event(Event.SEVERITY_ERR, desc)
 				self.event_manager.add_log(log)
+				PMBUS_FLAG[pmbus_number-1] |= 0x10
 		except:
 			print" system_event : pmbus event fail"
 
@@ -121,7 +121,7 @@ class Hwmons():
 				elif 'temp2_input' in attribute:
 					self.check_pmbus_event(objpath,0x04)
 
-				return False
+				return True
 
 			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 			standby_monitor = intf_p.Get(HwmonSensor.IFACE_NAME, 'standby_monitor')

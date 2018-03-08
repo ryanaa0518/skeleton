@@ -332,7 +332,7 @@ def convertGpio(name):
     return base + offset
 
 SENSOR_MONITOR_CONFIG = [
-	['/org/openbmc/sensors/temperature/TMP9', { 
+	['/org/openbmc/sensors/temperature/TMP1', { 
 							'object_path' : '/sys/class/hwmon/hwmon1/temp1_input',
 							'poll_interval' : 5000,
 							'scale' : 1000,
@@ -346,7 +346,7 @@ SENSOR_MONITOR_CONFIG = [
 							'standby_monitor' : True
 						}
 	],
-	['/org/openbmc/sensors/temperature/TMP10', {
+	['/org/openbmc/sensors/temperature/TMP2', {
 							'object_path' : '/sys/class/hwmon/hwmon2/temp1_input',
 							'poll_interval' : 5000,
 							'scale' : 1000,
