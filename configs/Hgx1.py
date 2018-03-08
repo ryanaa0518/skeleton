@@ -270,6 +270,12 @@ APPS = {
 		'monitor_process' : False,
 		'process_name'    : 'multi-user-check.exe',
 	},
+	'sntp_sync_period' : {
+		'system_state'    : 'BMC_STARTING',
+		'start_process'   : True,
+		'monitor_process' : True,
+		'process_name'    : 'sntp_sync_period.exe',
+	},
 }
 
 CACHED_INTERFACES = {
