@@ -11,53 +11,60 @@
 #define NTP_EVENT_TYPE 0x71
 #define EVD_SYNC_TIME 0x1
 #define EVD_SYNC_TIME_FAIL 0x3
-#define NOT_SYNCED 1
-#define IS_SYNCED 2
+#define NOT_SYNCED 0
+#define IS_SYNCED 1
 
 int sntp_sync()
 {
     FILE* fp;
-    int ip[4];
-    int flag = 0;
+    int ip[4], temp_ip[4]={-1,-1,-1,-1};
+    int flag = NOT_SYNCED;
     char cmd[256];
     int stat = 0;
     int last_sync_stat = -1;
     int assert_ntp_failed = 0;
     struct timeval tv_pre, tv_cur;
     int timeshift;
+    int IS_FROUND = 1;
 
     while (1) {
-        fp = fopen(NTP_CONF_PATH, "r+");
+        fp = fopen(NTP_CONF_PATH, "r");
         if (fp == NULL) {
-            printf("SNTP_SYNC: open config read ntp address failed\n"); //[DEBUG]
 
             if(last_sync_stat != 1){
                 /* Log the sync result event when sync cmd is diff stat*/
                 sprintf(cmd, "/usr/bin/python /usr/sbin/event.py --ERROR='Timestamp Synced with NTP server failed'");
                 system(cmd);
+                last_sync_stat = 1;
             }
-            last_sync_stat = 1;
 
             sleep(NTP_SYNC_PERIOD);
             continue;
         }
-		
-        fscanf(fp, "%d.%d.%d.%d.%d", &ip[0], &ip[1], &ip[2], &ip[3], &flag);
+
+        fscanf(fp, "%d.%d.%d.%d", &ip[0], &ip[1], &ip[2], &ip[3]);
+        fclose(fp);
+
+        if((ip[0] != temp_ip[0]) || (ip[1] != temp_ip[1]) ||
+          (ip[2] != temp_ip[2]) || (ip[3] != temp_ip[3])){
+            flag = NOT_SYNCED;
+        }
+
+        int idx;
+        for(idx=0; idx<4; idx++){
+            temp_ip[idx] = ip[idx];
+        }
+
+        if(IS_FROUND){
+            flag = NOT_SYNCED;
+            IS_FROUND = 0;
+        }
 
         if(flag == IS_SYNCED){
-            printf("SNTP_SYNC: time is synced\n"); //[DEBUG]
-            fclose(fp);
             sleep(NTP_SYNC_PERIOD);
             continue;
         }
 
-        if((flag == 0) || (flag != NOT_SYNCED)){
-            fclose(fp);
-            fp = fopen(NTP_CONF_PATH, "w");
-            char ch[20];
-            sprintf(ch, "%d.%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3], NOT_SYNCED);
-            fputs(ch ,fp);
-        }
 
         /* Get current timestamp */
         gettimeofday(&tv_pre,NULL);
@@ -67,10 +74,8 @@ int sntp_sync()
         stat = WEXITSTATUS(system(cmd));
 
         if (stat == NTP_SYNC_SUCCESS) {
-            
-            fseek(fp, -1, SEEK_END);
-            fputs("2",fp);
-            printf("SNTP_SYNC: NTP SYNC IS DONE\n"); //[DEBUG]
+
+            flag = IS_SYNCED;
 
             if(stat != last_sync_stat){
                 /* Log the sync result event when sync cmd is diff stat*/
@@ -95,6 +100,8 @@ int sntp_sync()
             }
         } else {
 
+            flag = NOT_SYNCED;
+
             if(stat != last_sync_stat){
                 /* Log the sync result event when sync cmd is diff stat*/
                 sprintf(cmd, "/usr/bin/python /usr/sbin/event.py --ERROR='Timestamp Synced with NTP server failed'");
@@ -110,8 +117,6 @@ int sntp_sync()
         }
 
         last_sync_stat = stat;
-
-        fclose(fp);
         sleep(NTP_SYNC_PERIOD);
     }
 }
