@@ -175,7 +175,7 @@ APPS = {
 		'start_process'   : True,
 		'monitor_process' : False,
 		'process_name'    : 'phosphor-read-eeprom',
-		'args'            : ['--eeprom','/sys/bus/i2c/devices/4-0054/eeprom','--fruid','3'],
+		'args'            : ['--eeprom','/sys/bus/i2c/devices/4-0050/eeprom','--fruid','3'],
 	},
 	'exp_vpd' : {
 		'system_state'    : 'BMC_STARTING2',
