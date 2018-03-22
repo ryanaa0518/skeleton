@@ -86,17 +86,38 @@ class Hwmons():
 		except:
 			print" system_event : fail"
 
-	def check_pmbus_event(self,objpath,flag):
+	def check_pmbus_event (self, raw_value, flag, objpath):
 		try:
 			pmbus_number = int(filter(str.isdigit,objpath.split('/')[5]))
-			PMBUS_FLAG[pmbus_number-1] |= flag
-			if PMBUS_FLAG[pmbus_number-1] == 0x07:
-				desc = "PSU%d no longer exists" % pmbus_number
-				log = Event(Event.SEVERITY_ERR, desc)
-				self.event_manager.add_log(log)
-				PMBUS_FLAG[pmbus_number-1] |= 0x10
+			if PMBUS_FLAG[pmbus_number-1] & 0x10 == 0x10:
+				if raw_value != "N/A":
+					if PMBUS_FLAG[pmbus_number-1] & flag == flag:
+						PMBUS_FLAG[pmbus_number-1] &= ~flag
+					elif PMBUS_FLAG[pmbus_number-1] & flag == flag:
+						PMBUS_FLAG[pmbus_number-1] &= ~flag
+					elif PMBUS_FLAG[pmbus_number-1] & flag == flag:
+						PMBUS_FLAG[pmbus_number-1] &= ~flag
+				if PMBUS_FLAG[pmbus_number-1] & 0x07 == 0:
+					PMBUS_FLAG[pmbus_number-1] = 0
+					desc = "PSU%d Entity Presence" % pmbus_number
+					log = Event(Event.SEVERITY_INFO, desc)
+					self.event_manager.add_log(log)
+			else:
+				if raw_value == "N/A": 
+					if PMBUS_FLAG[pmbus_number-1] & flag == 0:
+						PMBUS_FLAG[pmbus_number-1] |= flag
+					elif PMBUS_FLAG[pmbus_number-1] & flag == 0:
+						PMBUS_FLAG[pmbus_number-1] |= flag
+					elif PMBUS_FLAG[pmbus_number-1] & flag == 0:
+						PMBUS_FLAG[pmbus_number-1] |= flag
+				if PMBUS_FLAG[pmbus_number-1] == 0x07:
+					PMBUS_FLAG[pmbus_number-1] |= 0x10
+					desc = "PSU%d no longer exists" % pmbus_number
+					log = Event(Event.SEVERITY_ERR, desc)
+					self.event_manager.add_log(log)
+	
 		except:
-			print" system_event : pmbus event fail"
+			print "system_event : pmbus event fail"	
 
 	def poll(self,objpath,attribute):
 		try:
@@ -111,20 +132,18 @@ class Hwmons():
 					raw_value = "N/A"
 			else:
 				raw_value = "N/A"
-
-			if raw_value == "N/A":
-				#PSU status check
-				if 'power2_input' in attribute:
-					self.check_pmbus_event(objpath,0x01)
-				elif 'in2_input' in attribute:
-					self.check_pmbus_event(objpath,0x02)
-				elif 'temp2_input' in attribute:
-					self.check_pmbus_event(objpath,0x04)
-
-				return True
-
+				
+			#PSU status check
+			if 'power2_input' in attribute:
+				self.check_pmbus_event(raw_value, 0x01, objpath)
+			elif 'in2_input' in attribute:
+				self.check_pmbus_event(raw_value, 0x02, objpath)
+			elif 'temp2_input' in attribute:
+				self.check_pmbus_event(raw_value, 0x04, objpath)
+				
 			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
 			standby_monitor = intf_p.Get(HwmonSensor.IFACE_NAME, 'standby_monitor')
+			self.check_system_event(current_pgood)
 			
 			if current_pgood == 0 and standby_monitor == False:
 				raw_value = -1
@@ -135,8 +154,6 @@ class Hwmons():
 
 
 			if raw_value == -1 or raw_value == 255:
-				#obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
-				#intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
 				reading_error_count = intf_p.Get(HwmonSensor.IFACE_NAME, 'reading_error_count')
 
 				if reading_error_count != "N/A":
@@ -148,22 +165,13 @@ class Hwmons():
 					reading_error_count = 0
 					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
 
-			#obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-			#intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
 			rtn = intf.setByPoll(raw_value)
 			if (rtn[0] == True):
 				self.writeAttribute(attribute,rtn[1])
-			#intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-			current_pgood = self.pgood_intf.Get('org.openbmc.control.Power', 'pgood')
-			self.check_system_event(current_pgood)
-			
-			if current_pgood == 0 and standby_monitor == False:
-				#obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
-				#intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-				#sensornumber_temp = intf.Get(HwmonSensor.IFACE_NAME, 'sensornumber')
-				#if sensornumber_temp >= "0x11" and sensornumber_temp <= "0x1C" :
+				
+			if raw_value == "N/A":
 				return True
-
+				
 			threshold_state = intf_p.Get(SensorThresholds.IFACE_NAME, 'threshold_state')
 			if threshold_state != self.threshold_state[objpath]:
 				origin_threshold_type = self.threshold_state[objpath]
