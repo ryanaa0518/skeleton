@@ -44,18 +44,18 @@ IFACE_LOOKUP = {
 }
 
 class Hwmons():
-	def __init__(self,bus):
+	def __init__(self, bus):
 		self.sensors = { }
 		self.hwmon_root = { }
 		self.threshold_state = {}
 		self.scanDirectory()
 		self.pgood_obj = bus.get_object('org.openbmc.control.Power', '/org/openbmc/control/power0', introspect=False)
-		self.pgood_intf = dbus.Interface(self.pgood_obj,dbus.PROPERTIES_IFACE)
+		self.pgood_intf = dbus.Interface(self.pgood_obj, dbus.PROPERTIES_IFACE)
 		self.record_pgood = 0
 		self.event_manager = EventManager()
 		gobject.timeout_add(DIR_POLL_INTERVAL, self.scanDirectory)
 
-	def readAttribute(self,filename):
+	def readAttribute(self, filename):
 		val = "N/A"
 		try:
 			with open(filename, 'r') as f:
@@ -65,7 +65,7 @@ class Hwmons():
 			print "Cannot read attributes:", filename
 		return val
 
-	def writeAttribute(self,filename,value):
+	def writeAttribute(self, filename, value):
 		with open(filename, 'w') as f:
 			f.write(str(value)+'\n')
 
@@ -88,42 +88,34 @@ class Hwmons():
 
 	def check_pmbus_event (self, raw_value, flag, objpath):
 		try:
-			pmbus_number = int(filter(str.isdigit,objpath.split('/')[5]))
+			pmbus_number = int(filter(str.isdigit, objpath.split('/')[5]))
 			if PMBUS_FLAG[pmbus_number-1] & 0x10 == 0x10:
 				if raw_value != "N/A":
-					if PMBUS_FLAG[pmbus_number-1] & flag == flag:
-						PMBUS_FLAG[pmbus_number-1] &= ~flag
-					elif PMBUS_FLAG[pmbus_number-1] & flag == flag:
-						PMBUS_FLAG[pmbus_number-1] &= ~flag
-					elif PMBUS_FLAG[pmbus_number-1] & flag == flag:
-						PMBUS_FLAG[pmbus_number-1] &= ~flag
+					PMBUS_FLAG[pmbus_number-1] &= ~flag
+
 				if PMBUS_FLAG[pmbus_number-1] & 0x07 == 0:
-					PMBUS_FLAG[pmbus_number-1] = 0
 					desc = "PSU%d Entity Presence" % pmbus_number
 					log = Event(Event.SEVERITY_INFO, desc)
 					self.event_manager.add_log(log)
+					PMBUS_FLAG[pmbus_number-1] = 0
 			else:
-				if raw_value == "N/A": 
-					if PMBUS_FLAG[pmbus_number-1] & flag == 0:
-						PMBUS_FLAG[pmbus_number-1] |= flag
-					elif PMBUS_FLAG[pmbus_number-1] & flag == 0:
-						PMBUS_FLAG[pmbus_number-1] |= flag
-					elif PMBUS_FLAG[pmbus_number-1] & flag == 0:
-						PMBUS_FLAG[pmbus_number-1] |= flag
+				if raw_value == "N/A":
+					PMBUS_FLAG[pmbus_number-1] |= flag
+
 				if PMBUS_FLAG[pmbus_number-1] == 0x07:
-					PMBUS_FLAG[pmbus_number-1] |= 0x10
 					desc = "PSU%d no longer exists" % pmbus_number
 					log = Event(Event.SEVERITY_ERR, desc)
 					self.event_manager.add_log(log)
+					PMBUS_FLAG[pmbus_number-1] |= 0x10
 	
 		except:
 			print "system_event : pmbus event fail"	
 
-	def poll(self,objpath,attribute):
+	def poll(self, objpath, attribute):
 		try:
 			obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
 			intf_p = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
-			intf = dbus.Interface(obj,HwmonSensor.IFACE_NAME)
+			intf = dbus.Interface(obj, HwmonSensor.IFACE_NAME)
 			
 			if attribute != '':
 				try:
@@ -132,7 +124,7 @@ class Hwmons():
 					raw_value = "N/A"
 			else:
 				raw_value = "N/A"
-				
+
 			#PSU status check
 			if 'power2_input' in attribute:
 				self.check_pmbus_event(raw_value, 0x01, objpath)
@@ -149,7 +141,7 @@ class Hwmons():
 				raw_value = -1
 				rtn = intf.setByPoll(raw_value)
 				if (rtn[0] == True):
-					self.writeAttribute(attribute,raw_value)
+					self.writeAttribute(attribute, raw_value)
 				return True
 
 
@@ -158,16 +150,16 @@ class Hwmons():
 
 				if reading_error_count != "N/A":
 					reading_error_count +=1
-					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count', reading_error_count)
 					if reading_error_count < 5:
 						return True
 
 					reading_error_count = 0
-					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count',reading_error_count)
+					intf_p.Set(HwmonSensor.IFACE_NAME,'reading_error_count', reading_error_count)
 
 			rtn = intf.setByPoll(raw_value)
 			if (rtn[0] == True):
-				self.writeAttribute(attribute,rtn[1])
+				self.writeAttribute(attribute, rtn[1])
 				
 			if raw_value == "N/A":
 				return True
@@ -188,7 +180,7 @@ class Hwmons():
 
 		except:     
 			print "HWMON: Attibute no longer exists: "+attribute
-			self.sensors.pop(objpath,None)
+			self.sensors.pop(objpath, None)
 			return False
 		return True
 
@@ -221,7 +213,7 @@ class Hwmons():
 		self.event_manager.add_log(log)
 		return True
 
-	def addObject(self,dpath,hwmon_path,hwmon):
+	def addObject(self, dpath, hwmon_path, hwmon):
 		objsuf = hwmon['object_path']
 		objpath = SENSOR_PATH+'/'+objsuf
 		
@@ -229,32 +221,32 @@ class Hwmons():
 			print "HWMON add: "+objpath+" : "+hwmon_path
 
 			## register object with sensor manager
-			obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
-			intf = dbus.Interface(obj,SENSOR_BUS)
-			intf.register("HwmonSensor",objpath)
+			obj = bus.get_object(SENSOR_BUS, SENSOR_PATH, introspect=False)
+			intf = dbus.Interface(obj, SENSOR_BUS)
+			intf.register("HwmonSensor", objpath)
 
 			## set some properties in dbus object		
-			obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-			intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
-			intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+			obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+			intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+			intf.Set(HwmonSensor.IFACE_NAME,'filename', hwmon_path)
 			# init value as N/A
 			intf.Set(SensorValue.IFACE_NAME,'value','N/A')
 			
 			## check if one of thresholds is defined to know
 			## whether to enable thresholds or not
 			if (hwmon.has_key('critical_upper') or hwmon.has_key('critical_lower')):
-				intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',True)
+				intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled', True)
 
 			for prop in hwmon.keys():
 				if (IFACE_LOOKUP.has_key(prop)):
-					intf.Set(IFACE_LOOKUP[prop],prop,hwmon[prop])
+					intf.Set(IFACE_LOOKUP[prop], prop, hwmon[prop])
 					print "Setting: "+prop+" = "+str(hwmon[prop])
 
 			self.sensors[objpath]=True
 			self.hwmon_root[dpath].append(objpath)
 			self.threshold_state[objpath] = "NORMAL"
 
-			gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
+			gobject.timeout_add(hwmon['poll_interval'], self.poll, objpath, hwmon_path)
 
 	def addSensorMonitorObject(self):
 		if "SENSOR_MONITOR_CONFIG" not in dir(System):
@@ -271,14 +263,14 @@ class Hwmons():
 			hwmon_path = hwmon['object_path']
 			if (self.sensors.has_key(objpath) == False):
 				## register object with sensor manager
-				obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
-				intf = dbus.Interface(obj,SENSOR_BUS)
-				intf.register("HwmonSensor",objpath)
+				obj = bus.get_object(SENSOR_BUS, SENSOR_PATH, introspect=False)
+				intf = dbus.Interface(obj, SENSOR_BUS)
+				intf.register("HwmonSensor", objpath)
 
 				## set some properties in dbus object
-				obj = bus.get_object(SENSOR_BUS,objpath,introspect=False)
-				intf = dbus.Interface(obj,dbus.PROPERTIES_IFACE)
-				intf.Set(HwmonSensor.IFACE_NAME,'filename',hwmon_path)
+				obj = bus.get_object(SENSOR_BUS, objpath, introspect=False)
+				intf = dbus.Interface(obj, dbus.PROPERTIES_IFACE)
+				intf.Set(HwmonSensor.IFACE_NAME,'filename', hwmon_path)
 				# init value as N/A
 				val = 'N/A'
 				if hwmon.has_key('value'):
@@ -288,16 +280,16 @@ class Hwmons():
 				## check if one of thresholds is defined to know
 				## whether to enable thresholds or not
 				if (hwmon.has_key('critical_upper') or hwmon.has_key('critical_lower')):
-					intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled',True)
+					intf.Set(SensorThresholds.IFACE_NAME,'thresholds_enabled', True)
 
 				for prop in hwmon.keys():
 					if (IFACE_LOOKUP.has_key(prop)):
-						intf.Set(IFACE_LOOKUP[prop],prop,hwmon[prop])
+						intf.Set(IFACE_LOOKUP[prop], prop, hwmon[prop])
 
 				self.sensors[objpath]=True
 				self.threshold_state[objpath] = "NORMAL"
 				if hwmon.has_key('poll_interval'):
-					gobject.timeout_add(hwmon['poll_interval'],self.poll,objpath,hwmon_path)
+					gobject.timeout_add(hwmon['poll_interval'], self.poll, objpath, hwmon_path)
 	
 	def scanDirectory(self):
 	 	devices = os.listdir(HWMON_PATH)
@@ -321,14 +313,14 @@ class Hwmons():
 						label_key = self.readAttribute(f)
 						if (hwmon['labels'].has_key(label_key)):
 							namef = f.replace('_label','_input')
-							self.addObject(dpath,namef,hwmon['labels'][label_key])
+							self.addObject(dpath, namef, hwmon['labels'][label_key])
 						else:
 							pass
 							#print "WARNING - hwmon: label ("+label_key+") not found in lookup: "+f
 							
 				if hwmon.has_key('names'):
 					for attribute in hwmon['names'].keys():
-						self.addObject(dpath,dpath+attribute,hwmon['names'][attribute])
+						self.addObject(dpath, dpath+attribute, hwmon['names'][attribute])
 						
 			#else:
 				#print "WARNING - hwmon: Unhandled hwmon: "+dpath
@@ -341,12 +333,12 @@ class Hwmons():
 				for objpath in self.hwmon_root[k]:
 					if (self.sensors.has_key(objpath) == True):
 						print "HWMON remove: "+objpath
-						self.sensors.pop(objpath,None)
-						obj = bus.get_object(SENSOR_BUS,SENSOR_PATH,introspect=False)
-						intf = dbus.Interface(obj,SENSOR_BUS)
+						self.sensors.pop(objpath, None)
+						obj = bus.get_object(SENSOR_BUS, SENSOR_PATH, introspect=False)
+						intf = dbus.Interface(obj, SENSOR_BUS)
 						intf.delete(objpath)
 
-				self.hwmon_root.pop(k,None)
+				self.hwmon_root.pop(k, None)
 				
 		return True
 
