@@ -194,7 +194,7 @@ static int set_fanled(uint8_t port0, uint8_t port1, int use_pec)
 	uint8_t write_bytes[3];
 	int fd = -1;
 
-	if (strlen(g_FanLed_I2CBus)<=0)
+	if (strlen(g_FanLed_I2CBus) <= 0)
 		return -1;
 
 	fd = open(g_FanLed_I2CBus, O_RDWR);
@@ -280,7 +280,7 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 	sensor_data->intergral_i=(sensor_data->intergral_i+1) % sample_n;
 	total_integral_error = 0;
 
-	for(i=0; i<sample_n; i++) {
+	for(i = 0; i < sample_n; i++) {
 		total_integral_error += sensor_data->interal_Err[i] ;
 		if (g_fan_para_shm->debug_msg_info_en == 1)
 			printf("[FAN_ALGORITHM][%s, %d]  interal_Err[%d]:%d\n", __FUNCTION__, __LINE__, i, sensor_data->interal_Err[i]);
@@ -313,10 +313,10 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 	if (g_fan_para_shm->debug_msg_info_en == 1)
 		printf("[FAN_ALGORITHM][%s, %d] [Closeloop pid_value] %f; [Closeloop Calculate Fan Speed]: %f\n", __FUNCTION__, __LINE__, pid_value, pwm_speed);
 
-	if(pwm_speed > 100)
+	if (pwm_speed > 100)
 		pwm_speed = 100;
 
-	if(pwm_speed < 0)
+	if (pwm_speed < 0)
 		pwm_speed = 0;
 
 	sensor_data->last_error = (int) cur_integral_Err;
@@ -330,7 +330,7 @@ static int calculate_closeloop(struct st_closeloop_obj_data *sensor_data, double
 	if (g_Closeloopspeed < pwm_speed)
 		g_Closeloopspeed = pwm_speed;
 
-	if (sensor_data->sensor_reading>=sensor_data->warning_temp)
+	if (sensor_data->sensor_reading >= sensor_data->warning_temp)
 		g_Closeloopspeed = 100;
 	return 1;
 }
@@ -339,7 +339,7 @@ static int calculate_openloop (double sensorreading)
 {
 	int speed = 0;
 
-	if (sensorreading<=0) {
+	if (sensorreading <= 0) {
 		g_Openloopspeed = 0;
 		return 0;
 	}
@@ -403,7 +403,7 @@ static int get_sensor_reading(sd_bus *bus, char *obj_path, int *sensor_reading, 
 					NULL);
 	}
 
-	if(rc < 0) {
+	if (rc < 0) {
 		fprintf(stderr, "obj_path: %s Failed to get temperature from dbus: %s\n", obj_path, bus_error.message);
 	} else {
 		rc = sd_bus_message_read(response,"v", "i", sensor_reading);
@@ -423,7 +423,7 @@ static int get_max_sensor_reading(sd_bus *bus, struct st_fan_obj_path_info *fan_
 	int sensor_reading;
 	int max_value = 0;
 
-	for(i=0; i<fan_obj->size; i++) {
+	for (i = 0; i < fan_obj->size; i++) {
 		rc = get_sensor_reading(bus, fan_obj->path[i], &sensor_reading, fan_obj, i);
 		if (rc >= 0)
 			max_value = (max_value < sensor_reading)? sensor_reading : max_value;
@@ -438,13 +438,13 @@ int read_file(char *path)
 	int retry = 10;
 	int i;
 	int val = 0;
-	for (i =0 ; i<retry; i++)
+	for (i = 0; i < retry; i++)
 	{
 		fp1= fopen(path, "r");
 		if(fp1 != NULL)
 			break;
 	}
-	if ( i == retry) {
+	if (i == retry) {
 		return -1;
 	}
 	fscanf(fp1, "%d", &val);
@@ -484,12 +484,12 @@ static int get_max_sensor_reading_file(struct st_fan_obj_path_info *fan_obj, int
 	int flag = 0;
 	
 	
-	for(i=0; i<fan_obj->size; i++) {
+	for (i = 0; i < fan_obj->size; i++) {
 		rc = get_sensor_reading_file(fan_obj->path[i], &sensor_reading, fan_obj, i);
 		if (rc >= 0) {
 			if (sensor_reading < 0)
 				flag = -1;
-			if (index >=0) {
+			if (index >= 0) {
 				g_fan_para_shm->closeloop_param[index].groups_sensor_reading[i] =  sensor_reading;
 			}
 			max_value = (max_value < sensor_reading)? sensor_reading : max_value;
@@ -533,7 +533,7 @@ static int get_sensor_reading_Fan(sd_bus *bus, char *obj_path, int *sensor_readi
 	}
 
 
-	if(rc < 0) {
+	if (rc < 0) {
 		fprintf(stderr, "obj_path: %s Failed to get temperature from dbus: %s\n", obj_path, bus_error.message);
 	} else {
 		rc = sd_bus_message_read(response, "i", sensor_reading);
@@ -554,7 +554,7 @@ static int get_max_sensor_reading_Fan(sd_bus *bus, struct st_fan_obj_path_info *
 	int sensor_reading;
 	int max_value = 0;
 
-	for(i=0; i<fan_obj->size; i++) {
+	for (i = 0; i < fan_obj->size; i++) {
 		rc = get_sensor_reading_Fan(bus, fan_obj->path[i], &sensor_reading, fan_obj, i);
 		if (rc >= 0)
 			max_value = (max_value < sensor_reading)? sensor_reading : max_value;
@@ -572,7 +572,7 @@ static void check_change_closeloop_params(struct st_closeloop_obj_data *sensor_d
 		return ;
 
 
-	while (g_fan_para_shm->flag_closeloop == 3 && wait_times<MAX_WAIT_TIMEOUT)
+	while (g_fan_para_shm->flag_closeloop == 3 && wait_times < MAX_WAIT_TIMEOUT)
 		wait_times++;
 
 	if (g_fan_para_shm->flag_closeloop == 2) {
@@ -593,7 +593,7 @@ static void check_change_openloop_params()
 		return ;
 
 
-	while (g_fan_para_shm->flag_openloop == 3 && wait_times<MAX_WAIT_TIMEOUT)
+	while (g_fan_para_shm->flag_openloop == 3 && wait_times < MAX_WAIT_TIMEOUT)
 		wait_times++;
 
 	if (g_fan_para_shm->flag_openloop == 2) {
@@ -627,7 +627,7 @@ static int fan_control_algorithm_monitor(void)
 	do {
 		/* Connect to the user bus this time */
 		rc = sd_bus_open_system(&bus);
-		if(rc < 0) {
+		if (rc < 0) {
 			fprintf(stderr, "Failed to connect to system bus for fan_algorithm: %s\n", strerror(-rc));
 			bus = sd_bus_flush_close_unref(bus);
 			sleep(1);
@@ -673,14 +673,14 @@ static int fan_control_algorithm_monitor(void)
 
 				if (t_closeloop_data != NULL) {
 					t_closeloop_data->sensor_reading = get_max_sensor_reading_file(t_header, t_closeloop_data->index);
-					if (closeloop_index == 3 && t_closeloop_data->sensor_reading>=0)
+					if (closeloop_index == 3 && t_closeloop_data->sensor_reading >= 0)
 						t_closeloop_data->sensor_reading = (int) t_closeloop_data->sensor_reading / 1000;
 					g_fan_para_shm->closeloop_param[t_closeloop_data->index].closeloop_sensor_reading = t_closeloop_data->sensor_reading;
 					//if (t_closeloop_data->sensor_reading == 0)
 					//	t_closeloop_data->sensor_reading = 30;
 					check_change_closeloop_params(t_closeloop_data);
-					//if (g_fan_para_shm->debug_msg_info_en == 1)
-					//{
+					if (g_fan_para_shm->debug_msg_info_en == 1)
+					{
 						switch(closeloop_index)
 						{
 							case 0:
@@ -701,10 +701,10 @@ static int fan_control_algorithm_monitor(void)
 							default:
 								break;
 						}
-					//}
+					}
 					calculate_closeloop(t_closeloop_data, real_fanspeed);
 					closeloop_reading = (closeloop_reading > t_closeloop_data->sensor_reading)? t_closeloop_data->sensor_reading:closeloop_reading;
-					//if (g_fan_para_shm->debug_msg_info_en == 1)
+					if (g_fan_para_shm->debug_msg_info_en == 1)
 						printf("[FAN_ALGORITHM] ===========================================================================\n");
 				}
 				t_header = t_header->next;
@@ -712,13 +712,13 @@ static int fan_control_algorithm_monitor(void)
 			}
 			double adjust_closeloop_speed = -1;
 			int min_current_error = 9999;
-			for (i = 0; i<g_closeloop_record_count; i++)
+			for (i = 0; i < g_closeloop_record_count; i++)
 			{
 				if (g_fan_para_shm->debug_msg_info_en == 1)
 						printf("[FAN_ALGORITHM][Adjust Closeloop list ] i:%d, current_error:%d, adjust speed:%f pid_valu:%f\n",
 						    i, g_closeloop_record[i].current_error, g_closeloop_record[i].cal_speed, 
 						    g_closeloop_record[i].pid_val);
-				if (g_closeloop_record[i].pid_val >=0) {
+				if (g_closeloop_record[i].pid_val >= 0) {
 					adjust_closeloop_speed = -1;
 					break;
 				}
@@ -788,7 +788,6 @@ static int fan_control_algorithm_monitor(void)
 			for(i=0, k = 0; k<g_FanInputObjPath.size; i++) {
 
 				rc = get_sensor_reading_file(g_FanInputObjPath.path[k], &Fan_tach, &g_FanInputObjPath, k);
-				printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d\n", i,  Fan_tach, rc); //[DEBUGMSG]
 				if (g_fan_para_shm->debug_msg_info_en == 1)
 					printf("[FAN_ALGORITHM][Fan Tach: %d] value:%d, rc:%d, %s\n", i,  Fan_tach, rc, g_FanInputObjPath.path[k]);
 				if (rc < 0)
@@ -835,6 +834,8 @@ static int fan_control_algorithm_monitor(void)
 				real_fanspeed = (double)  g_fan_para_shm->max_fanspeed/100;
 			}
 		}
+
+		FinalFanSpeed = (20 * 255) / 100;
 
 		if (g_fan_para_shm->debug_msg_info_en == 1)
 			printf("[FAN_ALGORITHM][Set FanSpeed value] :%d\n", FinalFanSpeed);
