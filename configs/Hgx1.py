@@ -58,6 +58,11 @@ ENTER_STATE_CALLBACK = {
 			'obj_name'   : '/org/openbmc/control/led/heartbeat',
 			'interface_name' : 'org.openbmc.Led',
 		},
+		'setOn' : {
+			'bus_name'   : 'org.openbmc.control.led',
+			'obj_name'   : '/org/openbmc/control/led/identify',
+			'interface_name' : 'org.openbmc.Led',
+		},
 	}
 }
 
