@@ -13,8 +13,8 @@ GDBUS_APPS = bmcctl \
 	     op-pwrctl-sthelens
 
 SDBUS_APPS = gpu \
-	     pex9797_ctl
-
+	     pex9797_ctl\
+             cpld
 SUBDIRS = hacks \
 	  libopenbmc_intf \
 	  libopenbmc_sdbus \
