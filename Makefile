@@ -14,9 +14,10 @@ GDBUS_APPS = bmcctl \
 
 SDBUS_APPS = gpu \
 	     pex9797_ctl\
-             cpld\
-	     ast-jtag\
-             lattice
+             ast-jtag\
+	     lattice\
+             cpld
+
 SUBDIRS = hacks \
 	  libopenbmc_intf \
 	  libopenbmc_sdbus \
