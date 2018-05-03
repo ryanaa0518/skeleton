@@ -1,24 +1,17 @@
-ifdef INST
-ifeq ("$(origin INST)", "command line")
-INSTALL_DIR := $(INST)
-endif
-endif
 
-CFLAGS += -Wall
+
+CFLAGS  = -O2 -Wall -I.
+LDFLAGS	= -lrt 
 OBJS	= main.o lattice.o ast-jtag.o
 EXE	= cpld
 
-CC      = $(CROSS_COMPILE)gcc
+#CC      = $(CROSS_COMPILE)gcc
 
-.c.o:
-	$(CC) $(CFLAGS) -c $<
+%.o : %.c
+	$(CC) $(CFLAGS) -c $< -o $@ -I.
 
 $(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ -I.
 
-clean:
-	rm -f $(EXE) $(OBJS)
-
-install:
-	cp $(EXE) $(INSTALL_DIR)
-
+#clean:
+#	rm -f $(OBJS) $(EXE) *.o *.d libflash/test/test_flash libflash/test/*.o

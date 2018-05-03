@@ -14,8 +14,6 @@ GDBUS_APPS = bmcctl \
 
 SDBUS_APPS = gpu \
 	     pex9797_ctl\
-             ast-jtag\
-	     lattice\
              cpld
 
 SUBDIRS = hacks \
