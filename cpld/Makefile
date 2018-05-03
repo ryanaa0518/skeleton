@@ -20,6 +20,6 @@ $(EXE): $(OBJS)
 clean:
 	rm -f $(EXE) $(OBJS)
 
-#install:
-#	cp $(EXE) $(DESTDIR)
+install:
+	cp $(EXE) $(DESTDIR)
 #	cp $(EXE) $(INSTALL_DIR)
