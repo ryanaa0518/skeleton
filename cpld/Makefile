@@ -1,20 +1,25 @@
+#ifdef INST
+#ifeq ("$(origin INST)", "command line")
+#INSTALL_DIR := $(INST)
+#endif
+#endif
 
-
-CFLAGS  = -O2 -Wall -I.
-LDFLAGS	= -lrt 
+CFLAGS += -Wall
 OBJS	= main.o lattice.o ast-jtag.o
 EXE	= cpld
+#INSTALL_DIR = /usr/sbin
 
 CC      = $(CROSS_COMPILE)gcc
 
-%.o : %.c
-	$(CC) $(CFLAGS) -c $< -o $@ -I.
+.c.o:
+	$(CC) $(CFLAGS) -c $<
 
 $(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ -I.
-install:
-	mkdir -p $(DESTDIR)/usr/sbin
-	install cpld.exe $(DESTDIR)/usr/sbin
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-#clean:
-#	rm -f $(OBJS) $(EXE) *.o *.d libflash/test/test_flash libflash/test/*.o
+clean:
+	rm -f $(EXE) $(OBJS)
+
+install:
+	cp $(EXE) $(DESTDIR)
+#	cp $(EXE) $(INSTALL_DIR)
