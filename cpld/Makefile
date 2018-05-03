@@ -9,7 +9,7 @@ OBJS	= main.o lattice.o ast-jtag.o
 EXE	= cpld
 #INSTALL_DIR = /usr/sbin
 
-#CC      = $(CROSS_COMPILE)gcc
+CC      = $(CROSS_COMPILE)gcc
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
