@@ -10,11 +10,11 @@ GDBUS_APPS = bmcctl \
 	     rstbutton \
 	     idbutton \
 	     cable-led \
-	     op-pwrctl-sthelens
+	     op-pwrctl-sthelens\
+	     cpld
 
 SDBUS_APPS = gpu \
-	     pex9797_ctl\
-             cpld
+	     pex9797_ctl
 
 SUBDIRS = hacks \
 	  libopenbmc_intf \
