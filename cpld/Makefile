@@ -4,22 +4,38 @@
 #endif
 #endif
 
-CFLAGS += -Wall
-OBJS	= main.o lattice.o ast-jtag.o
-EXE	= cpld
+#CFLAGS += -Wall
+#OBJS	= main.o lattice.o ast-jtag.o
+#EXE	= cpld
 #INSTALL_DIR = /usr/sbin
 
 #CC      = $(CROSS_COMPILE)gcc
 
-%.o : %.c
-	$(CC) $(CFLAGS) -c $< -o $@ -I.
+#%.o : %.c
+#	$(CC) $(CFLAGS) -c $< -o $@ -I.
 
-$(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $" -o $@ -I.
+#$(EXE): $(OBJS)
+#	$(CC) $(CFLAGS) $" -o $@ -I.
 
-clean:
-	rm -f $(EXE) $(OBJS)
+#clean:
+#	rm -f $(EXE) $(OBJS)
 
 #install:
 #	cp $(EXE) $(DESTDIR)
 #	cp $(EXE) $(INSTALL_DIR)
+
+
+CFLAGS += -Wall
+OBJS	= main.o lattice.o ast-jtag.o
+EXE	= cpld
+
+CC      = $(CROSS_COMPILE)gcc
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+
+$(EXE): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@
+
+
+
