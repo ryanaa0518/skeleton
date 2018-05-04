@@ -11,7 +11,7 @@ EXE	= cpld
 
 #CC      = $(CROSS_COMPILE)gcc
 
-%.o : %.c:
+%.c.o:
 	$(CC) $(CFLAGS) -c $< -o $@ -I.
 
 $(EXE): $(OBJS)
