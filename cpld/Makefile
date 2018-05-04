@@ -28,6 +28,7 @@
 CFLAGS += -Wall
 OBJS	= main.o lattice.o ast-jtag.o
 EXE	= cpld
+INSTALL_DIR = /usr/sbin
 
 CC      = $(CROSS_COMPILE)gcc
 
@@ -37,5 +38,5 @@ CC      = $(CROSS_COMPILE)gcc
 $(EXE): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-
-
+install:
+	cp $(EXE) $(INSTALL_DIR)
