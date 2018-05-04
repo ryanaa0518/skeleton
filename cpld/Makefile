@@ -1,52 +1,18 @@
-#ifdef INST
-#ifeq ("$(origin INST)", "command line")
-#INSTALL_DIR := $(INST)
-#endif
-#endif
+BINS=cpld
+EXTRA_OBJS+=main.o \
+            ast-jtag.o \
+            lettice.o
 
-#CFLAGS += -Wall
-#OBJS	= main.o lattice.o ast-jtag.o
-#EXE	= cpld
-#INSTALL_DIR = /usr/sbin
+ALL_CFLAGS+=-Ipflash
+include ../gdbus.mk
+include ../rules.mk
 
-#CC      = $(CROSS_COMPILE)gcc
+%.o: cpld_1/%.c
+	$(CC) -c $(ALL_CFLAGS) -o $@ $<
 
-#%.o : %.c
-#	$(CC) $(CFLAGS) -c $< -o $@ -I.
-
-#$(EXE): $(OBJS)
-#	$(CC) $(CFLAGS) $" -o $@ -I.
-
-#clean:
-#	rm -f $(EXE) $(OBJS)
-
-#install:
-#	cp $(EXE) $(DESTDIR)
-#	cp $(EXE) $(INSTALL_DIR)
-CFLAGS += -Wall
-OBJS	= main.o lattice.o ast-jtag.o
-EXE	= cpld
-CC      = $(CROSS_COMPILE)gcc
-#CC      = gcc
-#all=cpld
-#cpld: $(OBJS)
-#	$(CC) $(CFLAGS) $^ -o $@
-#main.o: main.c
-#	$(CC) $(CFLAGS) –c $< -o $@
-#lattice.o: lattice.c
-#	$(CC) $(CFLAGS) –c $< -o $@
-#ast-jtag.o: ast-jtag.c
-#	$(CC) $(CFLAGS) –c $< -o $@
-#INSTALL_DIR = /usr/sbin
-
-#CC      = $(CROSS_COMPILE)gcc
-
-.c.o:
-	$(CC) $(CFLAGS) -c $<
-
-$(EXE): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
-
-#install:
-#	cp $(EXE) $(INSTALL_DIR)
-#	install $(EXE) $(INSTALL_DIR)
+#BINS=lettice
+#BINS+=ast-jtag
+#BINS+=main
+#LDLIBS+=-lopenbmc_sdbus
+#include ../sdbus.mk
+#include ../rules.mk
