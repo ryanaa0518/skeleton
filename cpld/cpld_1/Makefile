@@ -24,7 +24,7 @@
 #	cp $(EXE) $(DESTDIR)
 #	cp $(EXE) $(INSTALL_DIR)
 CFLAGS += -Wall
-OBJS	= main.o lattice.o ast-jtag.o
+OBJS	= lattice.o ast-jtag.o
 EXE	= cpld
 #CC      = $(CROSS_COMPILE)gcc
 #CC      = gcc

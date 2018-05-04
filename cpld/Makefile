@@ -1,9 +1,8 @@
 BINS=cpld
-EXTRA_OBJS+=main.o \
-            ast-jtag.o \
+EXTRA_OBJS+=ast-jtag.o \
             lettice.o
 
-ALL_CFLAGS+=-Ipflash
+#ALL_CFLAGS+=-Ipflash
 include ../gdbus.mk
 include ../rules.mk
 
