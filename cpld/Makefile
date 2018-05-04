@@ -26,8 +26,8 @@
 CFLAGS += -Wall
 OBJS	= main.o lattice.o ast-jtag.o
 #EXE	= cpld
-#CC      = $(CROSS_COMPILE)gcc
-CC      = gcc
+CC      = $(CROSS_COMPILE)gcc
+#CC      = gcc
 all=cpld
 cpld: $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
