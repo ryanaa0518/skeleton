@@ -153,14 +153,19 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 
 	if (write_len > 0) {
 		msg[n_msg].addr = slave_addr;
+                printf("msg[n_msg].addr : %x ", msg[n_msg].addr);
 		msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
+                printf("msg[n_msg].flags : %x ",msg[n_msg].flags);
 		msg[n_msg].len = write_len ;
+                printf("msg[n_msg].len : %x ",msg[n_msg].len);
 		msg[n_msg].buf = write_data_bytes;
+                printf("msg[n_msg].buf : %x ", msg[n_msg].buf);
 		n_msg++;
 	}
 
 	if (read_len>=0) {
 		msg[n_msg].addr = slave_addr;
+                printf("\r\n msg[n_msg].addr :%x \r\n",msg[n_msg].addr);
 		msg[n_msg].flags = I2C_M_RD
 				   | ((g_use_pec) ? I2C_CLIENT_PEC : 0)
 				   | ((read_len == 0) ? I2C_M_RECV_LEN : 0);
@@ -168,11 +173,14 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 		 * In case of g_n_read is 0, block length will be added by
 		 * the underlying bus driver.
 		 */
+                printf("\r\n msg[n_msg].flags : %x \r\n",msg[n_msg].flags);
 		msg[n_msg].len = (read_len) ? read_len : 256;
+                printf("\r\n msg[n_msg].len : %x \r\n", msg[n_msg].len);
 		msg[n_msg].buf = read_data_bytes ;
+                printf("\r\n msg[n_msg].buf : %x \r\n", msg[n_msg].buf);
 		n_msg++;
 	}
-
+        
 	data.msgs = msg;
 	data.nmsgs = n_msg;
 
