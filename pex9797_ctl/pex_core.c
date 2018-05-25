@@ -152,6 +152,7 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 	memset(&msg, 0, sizeof(msg));
 
 	if (write_len > 0) {
+                printf("\r\n Write :\r\n");
 		msg[n_msg].addr = slave_addr;
                 printf("\r\n msg[n_msg].addr : 0x%x ,", msg[n_msg].addr);
 		msg[n_msg].flags = (g_use_pec) ? I2C_CLIENT_PEC : 0;
@@ -169,6 +170,7 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 	}
 
 	if (read_len>=0) {
+                printf("\r\n Read :\r\n");
 		msg[n_msg].addr = slave_addr;
                 printf("\r\n msg[n_msg].addr : 0x%x ,",msg[n_msg].addr);
 		msg[n_msg].flags = I2C_M_RD
