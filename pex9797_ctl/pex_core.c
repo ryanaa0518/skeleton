@@ -163,7 +163,7 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
                 printf("msg[n_msg].buf :");
                 for(i=0 ;i <=msg[n_msg].len ;i ++)
                 {
-                	printf("0x%x \r\n", msg[n_msg].buf[i]);
+                	printf("0x%x ", msg[n_msg].buf[i]);
                 } 
 		n_msg++;
 	}
@@ -186,7 +186,7 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 
                 for(i=0 ;i <=msg[n_msg].len ;i ++)
                 {
-                        printf("0x%x \r\n", msg[n_msg].buf[i]);
+                        printf("0x%x ", msg[n_msg].buf[i]);
                 }
 
 		n_msg++;
