@@ -15,7 +15,8 @@ GDBUS_APPS = bmcctl \
 SDBUS_APPS = gpu \
 	     pex9797_ctl \
 	     sntp_sync_period \
-	     multi-user-check
+	     multi-user-check \
+             plxcm 
 
 SUBDIRS = hacks \
 	  libopenbmc_intf \

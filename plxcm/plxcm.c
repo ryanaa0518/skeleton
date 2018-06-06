@@ -22,6 +22,7 @@
 #define PEX_UDID_LEN (17)
 #define PEX_SMBUS_BLOCK_WRITE_CMD (0xBE)
 
+#define VERSION   "0.01" 
 
 enum {
 	EM_PEX_DEVICE_1 = 0,
@@ -61,7 +62,7 @@ typedef struct {
 typedef struct {
 	__u8 bus_no;
 
-	__u8 slave;
+	__u8 slave;  //i2c address
 
 	__u8 device_index;
 
@@ -97,7 +98,7 @@ pex_device_i2c_cmd pex_device_cmd_tab[EM_PEX_CMD_MAX] = {
 		{8, {0x3, 0x0, 0x3e, 0xeb, 0x00, 0x00, 0x00, 0x00}},
 		{-1,{0x0}}
 	},
-	{
+	{ 
 		EM_PEX_CMD_TEMP_ENABLE_CTL,
 		{8, {0x3, 0x0, 0x3e, 0xeb, 0x00, 0x00, 0x00, 0x80}},
 		{-1,{0x0}}
@@ -184,12 +185,7 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 		msg[n_msg].len = (read_len) ? read_len : 256;
                 printf(" msg[n_msg].len :   0x%x ,", msg[n_msg].len);
 		msg[n_msg].buf = read_data_bytes ;
-                printf(" msg[n_msg].buf :  ");
-
-                for(i=0 ;i <msg[n_msg].len ;i ++)
-                {
-                        printf("0x%x ", msg[n_msg].buf[i]);
-                }
+ 
 
 		n_msg++;
 	}
@@ -202,6 +198,15 @@ static int i2c_io(int fd, int slave_addr, int write_len, __u8 *write_data_bytes,
 		printf("Failed to do raw io\n");
 		return -1;
 	}
+	
+		printf(" msg[n_msg-1].buf :  ");
+		
+		//ryan: after the read , print the read message
+		for(i=0 ;i <msg[n_msg-1].len ;i ++)
+		{
+		        printf("0x%x ", msg[n_msg-1].buf[i]);
+		}
+                	
 	return 0;
 }
 
@@ -356,6 +361,7 @@ int function_get_pex_temp_data(int pex_idx)
 	i2c_bus = pex_device_bus[pex_idx].bus_no;
 	i2c_addr = pex_device_bus[pex_idx].slave;
 
+	//EM_PEX_CMD_TEMP_DISABLE_CTL
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_TEMP_DISABLE_CTL];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -364,7 +370,8 @@ int function_get_pex_temp_data(int pex_idx)
 		fprintf(stderr, "Failed to do iotcl cmd:%d, ret:%d\n", i2c_cmd->cmd, ret);
 		goto error_i2c_access;
 	}
-
+  
+  //EM_PEX_CMD_TEMP_ENABLE_CTL   
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_TEMP_ENABLE_CTL];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -374,6 +381,7 @@ int function_get_pex_temp_data(int pex_idx)
 		goto error_i2c_access;
 	}
 
+	//EM_PEX_CMD_TEMP_READ : 2
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_TEMP_READ];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -402,6 +410,130 @@ error_i2c_access:
 	write_file_pex(pex_idx, real_temp_data, "temp");
 	return rc ;
 }
+
+
+//add by ryan
+
+int function_write_reg_data(int pex_idx,__u16 reg,__u32 data)
+{
+	pex_device_i2c_cmd *i2c_cmd;
+	int i2c_bus;
+	int i2c_addr;
+	int ret;
+	int i;
+	char *rx_data;
+	int rx_len = 0;
+	unsigned int temp_sensor_data = 0;
+	double real_temp_data = 0.0;
+	int rc=-1;
+
+	i2c_bus = pex_device_bus[pex_idx].bus_no;
+	i2c_addr = pex_device_bus[pex_idx].slave;
+
+	printf("\r\n reg : 0x%x \r\n",reg);
+	printf("\r\n reg : 0x%x \r\n",data);
+	
+	
+		
+	//EM_PEX_CMD_TEMP_READ : 2
+	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_TEMP_DISABLE_CTL];	
+	
+	i2c_cmd->write_cmd.data[0]= 0x03; //write command
+	i2c_cmd->write_cmd.data[1]= 0x00; //Non-Fabric Mode
+	
+	i2c_cmd->write_cmd.data[2]= ((reg>>10)&0xff) | 0x3c;
+	printf("\r\n i2c_cmd->write_cmd.data[2] : %x \r\n",i2c_cmd->write_cmd.data[2]);
+	i2c_cmd->write_cmd.data[3]= (reg>>2)&0xff;
+	printf("\r\n i2c_cmd->write_cmd.data[3] : %x \r\n",i2c_cmd->write_cmd.data[3]);
+	
+	//data byte
+	i2c_cmd->write_cmd.data[4]= (data & 0xff);
+	printf("\r\n i2c_cmd->write_cmd.data[4] : %x \r\n",i2c_cmd->write_cmd.data[4]);
+	
+	i2c_cmd->write_cmd.data[5]= ((data >>8)& 0xff);
+	printf("\r\n i2c_cmd->write_cmd.data[5] : %x \r\n",i2c_cmd->write_cmd.data[5]);
+
+	i2c_cmd->write_cmd.data[6]= ((data >>16)& 0xff);
+	printf("\r\n i2c_cmd->write_cmd.data[6] : %x \r\n",i2c_cmd->write_cmd.data[6]);
+	
+	i2c_cmd->write_cmd.data[7]= ((data >>24)& 0xff);
+	printf("\r\n i2c_cmd->write_cmd.data[7] : %x \r\n",i2c_cmd->write_cmd.data[7]);
+	
+				
+	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
+			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
+	if (ret < 0) {
+		real_temp_data = -1;
+		fprintf(stderr, "Failed to do iotcl cmd:%d, ret:%d\n", i2c_cmd->cmd, ret);
+		goto error_i2c_access;
+	}
+
+#if 0
+	rx_len = i2c_cmd->read_cmd.len;
+	rx_data = i2c_cmd->read_cmd.data;
+	
+	for(i=0;i<rx_len;i++)
+	{
+		printf("\r\n i2c_cmd->read_cmd.data[%d] : %x \r\n",i,i2c_cmd->read_cmd.data[i]);
+	}
+#endif	
+
+error_i2c_access:
+	write_file_pex(pex_idx, real_temp_data, "temp");
+	return rc ;
+}
+
+
+int function_read_reg_data(int pex_idx,__u16 reg)
+{
+	pex_device_i2c_cmd *i2c_cmd;
+	int i2c_bus;
+	int i2c_addr;
+	int ret;
+	int i;
+	char *rx_data;
+	int rx_len = 0;
+	unsigned int temp_sensor_data = 0;
+	double real_temp_data = 0.0;
+	int rc=-1;
+
+	i2c_bus = pex_device_bus[pex_idx].bus_no;
+	i2c_addr = pex_device_bus[pex_idx].slave;
+
+	printf("\r\n reg : 0x%x \r\n",reg);
+	
+		
+	//EM_PEX_CMD_TEMP_READ : 2
+	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_TEMP_READ];	
+	
+	i2c_cmd->write_cmd.data[2]= ((reg>>10)&0xff) | 0x3c;
+	printf("\r\n i2c_cmd->write_cmd.data[2] : %x \r\n",i2c_cmd->write_cmd.data[2]);
+	i2c_cmd->write_cmd.data[3]= (reg>>2)&0xff;
+	printf("\r\n i2c_cmd->write_cmd.data[3] : %x \r\n",i2c_cmd->write_cmd.data[3]);
+			
+	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
+			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
+	if (ret < 0) {
+		real_temp_data = -1;
+		fprintf(stderr, "Failed to do iotcl cmd:%d, ret:%d\n", i2c_cmd->cmd, ret);
+		goto error_i2c_access;
+	}
+
+#if 0
+	rx_len = i2c_cmd->read_cmd.len;
+	rx_data = i2c_cmd->read_cmd.data;
+	
+	for(i=0;i<rx_len;i++)
+	{
+		printf("\r\n i2c_cmd->read_cmd.data[%d] : %x \r\n",i,i2c_cmd->read_cmd.data[i]);
+	}
+#endif
+
+error_i2c_access:
+	write_file_pex(pex_idx, real_temp_data, "temp");
+	return rc ;
+}	
+
 
 int pex_set_dbus_property(int pex_idx, char *property_name, char *property_value)
 {
@@ -439,7 +571,8 @@ void function_get_pex_serial_data(int pex_idx)
 	if (p_serial->serial_count == PEX_SERIAL_LEN) {
 		return ;
 	}
-
+   
+  //EM_PEX_CMD_UPPER_SERIAL_READ 
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_UPPER_SERIAL_READ];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -452,6 +585,7 @@ void function_get_pex_serial_data(int pex_idx)
 	for(i = 0; i<i2c_cmd->read_cmd.len; i++)
 		p_serial->serial_data[p_serial->serial_count++] = i2c_cmd->read_cmd.data[i];
 
+  //EM_PEX_CMD_LOWER_SERIAL_READ 	
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_LOWER_SERIAL_READ];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -467,6 +601,9 @@ void function_get_pex_serial_data(int pex_idx)
 	for (i = 0; i<p_serial->serial_count; i++, st+=2) {
 		snprintf(st, 3, "%02x", p_serial->serial_data[i]);
 	}
+	
+//add by ryan
+  printf("\r\n--function_get_pex_serial_data , st : %02x ---  \r\n",st);
 
 	if (pex_set_dbus_property(pex_idx, "Serial Number", property_value) < 0)
 		p_serial->serial_count = 0;
@@ -494,6 +631,8 @@ void function_get_pex_udid_data(int pex_idx)
 			for (i = 0; i<p_udid->udid_count; i++, st+=2) {
 				snprintf(st, 3, "%02x", p_udid->udid_data[i]);
 			}
+			//add by ryan
+  		printf("\r\n--function_get_pex_udid_data, st : %02x ---  \r\n",st);
 			if (pex_set_dbus_property(pex_idx, "UDID", property_value) >= 0)
 					p_udid->udid_sdbus_flag = 1;
 		}
@@ -512,7 +651,7 @@ void function_get_pex_udid_data(int pex_idx)
 	//**import: i2c_address swith smbus address
 	i2c_addr = pex_device_bus[pex_idx].smbus_slave;
 
-	//read pex9797 udid
+	//read pex9797 udid ,EM_PEX_CMD_UDID_READ
 	i2c_cmd = &pex_device_cmd_tab[EM_PEX_CMD_UDID_READ];
 	ret = i2c_raw_access(i2c_bus, i2c_addr, i2c_cmd->write_cmd.len,
 			     i2c_cmd->write_cmd.data, i2c_cmd->read_cmd.len, i2c_cmd->read_cmd.data);
@@ -527,9 +666,13 @@ void function_get_pex_udid_data(int pex_idx)
 	//set pex9797 dbus property
 	st = property_value;
 	for (i = 0; i<p_udid->udid_count; i++, st+=2) {
+		printf("\r\n p_udid->udid_data[i] : %x \r\n",p_udid->udid_data[i]);
 		snprintf(st, 3, "%02x", p_udid->udid_data[i]);
 	}
 
+	//add by ryan
+  printf("\r\n--function_get_pex_udid_data 2, st : %02x ---  \r\n",st);
+  
 	p_udid->udid_sdbus_flag = 1;
 	if (pex_set_dbus_property(pex_idx, "UDID", property_value) < 0)
 		p_udid->udid_sdbus_flag = 0;
@@ -627,11 +770,123 @@ static void save_pid (void) {
     fclose(pidfile);
 }
 
+void usage() {
+	printf("=================================================\r\n");
+	printf("The plxcm usage:\r\n");
+	printf("=================================================\r\n");
+  printf("\n version : %s \n", VERSION);
+  printf("Usage: plxcm [-d device_id] [-a address]  [-r|-w value] \n");
+  printf("       -d : device id \n");
+  printf("       -a : assign address \n");
+  printf("       -r : read  \n");
+  printf("       -w  [value]:  write value   \n");  	
+	printf("   such as  plxcm.exe -d 1 -a 0xbac -r 1 \r\n");
+	printf("   such as  plxcm.exe -d 1 -a 0x80 -w 0xff  \r\n");
+	printf("=================================================\r\n");
+	printf("Device Id List\r\n");
+	printf("-d = 0 :  16, 0x5d, EM_PEX_DEVICE_1 \r\n");
+	printf("-d = 1 :  17, 0x5d, EM_PEX_DEVICE_2 \r\n");
+	printf("-d = 2 :  18, 0x5d, EM_PEX_DEVICE_3 \r\n");
+	printf("-d = 3 :  19, 0x5d, EM_PEX_DEVICE_4 \r\n");
+	
+	
+}
+
 int
-main(void)
+main(int argc, char** argv)
 {
-    save_pid();
-	pex_data_scan();
+	int i;
+	int portArg,regArg;
+	__u32 regData;
+					
+	//if the input parameter is fewer , show warning message
+	if(argc <7)
+	{
+		usage();
+		return 0;
+	}
+	
+	for(i=0;i<argc;i++)
+	{
+		printf("\r\nargv[%d]: %s\r\n",i,argv[i]);	
+	}
+	  
+	while (argc > 2) {
+    char* const opt = argv[1];
+    printf("\r\nargv[1] : %s \r\n" ,argv[1]);
+    
+    
+    if (opt[0] != '-') usage();
+    //printf("\r\n opt[0] :%s  , opt[1] :%s\r\n",&opt[0],&opt[1]);
+    
+    switch (opt[1]) {
+    	
+    	  
+				case 'd': { // specify device id
+					printf("\r\nSetting the device id:");
+			
+					if (sscanf(argv[2], "%d", &portArg) != 1) {
+						usage();
+					}
+				
+				printf("%d \r\n",portArg);
+				//++argv; --argc;
+				argv=argv+2; 
+				argc=argc-2;
+				break;
+				}
+
+				case 'a': { // specify the register
+					printf("\r\nSetting the register:\r\n");
+			
+					if (sscanf(argv[2], "%x", &regArg) != 1) {
+						usage();
+					}
+				
+				printf("%x \r\n",regArg);
+				//++argv; --argc;
+				argv=argv+2; 
+				argc=argc-2;
+				break;
+				}
+
+				case 'r': { // read the register
+					printf("\r\nReading the register\r\n");				
+	
+				function_read_reg_data(portArg,regArg);
+				//++argv; --argc;
+				argv=argv+2; 
+				argc=argc-2;
+				break;
+				}
+
+
+				case 'w': { // write the register
+					printf("\r\nWriteing the register:\r\n");				
+	
+					if (sscanf(argv[2], "%x", &regData) != 1) {
+						usage();
+					}
+				
+					printf("%x \r\n",regData);
+				
+				function_write_reg_data(portArg,regArg,regData);
+				//++argv; --argc;
+				argv=argv+2; 
+				argc=argc-2;
+				break;
+				}				
+
+		    default: {
+		      usage();
+		      return 0;
+		    }
+
+  	}
+	}	
+  //  save_pid();
+	//pex_data_scan();
+
 	return 0;
 }
 
