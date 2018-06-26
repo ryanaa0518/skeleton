@@ -377,7 +377,7 @@ int function_write_reg_data(int pex_idx,int port_id ,__u16 reg,__u32 data)
 }
 
 
-__u32 function_read_reg_data(int pex_idx ,int port_id ,__u16 reg)
+int function_read_reg_data(int pex_idx ,int port_id ,__u16 reg)
 {
 	pex_device_i2c_cmd *i2c_cmd;
 	int i2c_bus;
@@ -417,7 +417,6 @@ __u32 function_read_reg_data(int pex_idx ,int port_id ,__u16 reg)
 	}
 
 
-
 #if 1
 //save the reg data in file system
 
@@ -440,8 +439,6 @@ __u32 function_read_reg_data(int pex_idx ,int port_id ,__u16 reg)
 	system(shell_cmd);
 		
 #endif
-
-	return regData;
 
 }	
 
@@ -475,7 +472,6 @@ void usage() {
 	
 #define CTRL_WRITE_4BYTES  0b010
 #define CTRL_SET_WENABLE   0b110
-#define CTRL_READ_4BYTES   0b011
 #define BUFFER_REG         0x264
 #define STATUS_CTRL_REG    0x260
 	
@@ -493,56 +489,6 @@ int write_prepare(int pex_idx,int port_id ,int addr ,__u32 data)
 
 }
 
-int waitCommandCompletion(int pex_idx,int port_id )
-{
-	__u32 d;
-	int count=0;
-	d= function_read_reg_data(pex_idx, port_id,STATUS_CTRL_REG);
-	
-	printf("\r\n------%x-------\r\n",(d & (1<<18)));           
-  while ((d & (1<<18)) && (count<10) )
-  {
-  	d= function_read_reg_data(pex_idx, port_id,STATUS_CTRL_REG);
-  	printf("\r\n------%x-------\r\n",(d & (1<<18)));  
-  	count++;
-  }
-  
-}
-
-
-
-int readEeprom(int pex_idx,int port_id ,char* eepromFile)
-{
-	int size;
-	FILE *fd;
-	char buffer[512];
-	int padding,addr;
-	int datalen = 128 ;
-	__u32 d;
-	__u32 cmd1 ,cmd0 ;
-	
-	
-	fd = fopen(eepromFile,"wb");
-
-	if (fd == NULL) {
-		printf("\r\nFail to open the eepromFile \r\n");
-		return 0;
-	}
-	
-	for(addr= 0 ;addr <= datalen;addr++)
-	{	
-		
-	  cmd0 = (CTRL_READ_4BYTES <<13) | (addr & 0xFFF);
-	  function_write_reg_data( pex_idx, port_id , STATUS_CTRL_REG, cmd0);
-	  waitCommandCompletion(pex_idx, port_id);
-	
-	  d=function_read_reg_data(pex_idx, port_id,BUFFER_REG);
-	  printf("\r\n---count : %d ,data:%x ---\r\n", addr, d);	
-	  fwrite(&d , sizeof(__u32), 1, fd);
-	}
-	
-  fclose(fd);
-}
 
 
 int writeEeprom(int pex_idx,int port_id ,char* eepromFile)
@@ -594,7 +540,7 @@ int writeEeprom(int pex_idx,int port_id ,char* eepromFile)
 			else if (padding ==1 )	
 			{
 				d = buffer[addr*4 + 0] | (buffer[addr*4 + 1] << 8) | (buffer[addr*4 + 2] << 16) | (0xff << 24);
-			}		
+			}				
 		}
 		else
 		{		
@@ -603,8 +549,12 @@ int writeEeprom(int pex_idx,int port_id ,char* eepromFile)
   	printf("\r\n---count : %d ,data:%x ---\r\n", addr, d);
     write_prepare(pex_idx,port_id,addr, d);
 	}
+	
+	
+	
 	  
   fclose(fd);
+
 }
 
 
@@ -718,9 +668,8 @@ int main(int argc, char** argv)
 					}
 								
 					if (eepromAction == 0)  //read the eeprom to file
-					{	
+					{
 							printf("\r\nread the eeprom to file \r\n");
-							readEeprom(devArg,portArg,eepromFile);
 					}
 					else if(eepromAction == 1) //write the eeprom to file				
 					{ 
